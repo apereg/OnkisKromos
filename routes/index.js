@@ -6,7 +6,7 @@ const rootDirectory = path.join(__dirname,'../')
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.sendFile('login.html', {root: publicDirectory});
+  res.sendFile('login.html', {root: publicDirectory+'/login'});
 });
 
 /* GET no indexed page */
@@ -15,5 +15,6 @@ router.get('*', function(req, res, next) {
   error.statusCode = 404;
   next(error);
 });
+
 
 module.exports = router;
