@@ -53,34 +53,7 @@ app.use((req, res, next) => {
     console.log(`${req.ip} tried to access ${req.originalUrl}`)
 });
 
-const rutasProtegidas = express.Router();
-rutasProtegidas.use((req, res, next) => {
-    const token = req.headers['access-token'];
- 
-    if (token) {
-      jwt.verify(token, app.get('llave'), (err, decoded) => {      
-        if (err) {
-          return res.json({ mensaje: 'Token inválida' });    
-        } else {
-          req.decoded = decoded;    
-          next();
-        }
-      });
-    } else {
-      res.send({ 
-          mensaje: 'Token no proveída.' 
-      });
-    }
- });
-
-
 const bodyParser = require('body-parser')
-const jwt = require('jsonwebtoken')
-const config = require('./tokenConfig')
-
-app.set('key', config.TOKEN_SECRET);
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
