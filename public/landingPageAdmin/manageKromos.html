@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Table - Control Admin Panel</title>
+    <title>Blank Page - Administrador</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
@@ -24,8 +24,8 @@
                 <ul class="navbar-nav text-light" id="accordionSidebar">
                     <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
                     <li class="nav-item"></li>
-                    <li class="nav-item"><a class="nav-link active" href="table.html"><i class="fas fa-table"></i><span>Colecciones</span></a></li>
-                    <li class="nav-item"><a class="nav-link" href="manageKromos.html"><i class="fa fa-money"></i><span>Gestión de Kromos</span></a></li>
+                    <li class="nav-item"><a class="nav-link" href="table.html"><i class="fas fa-table"></i><span>Colecciones</span></a></li>
+                    <li class="nav-item"><a class="nav-link active" href="manageKromos.html"><i class="fa fa-money"></i><span>Gestión de Kromos</span></a></li>
                 </ul>
                 <div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div>
             </div>
@@ -127,116 +127,109 @@
                     </div>
                 </nav>
                 <div class="container-fluid">
-                    <h3 class="text-dark mb-4">Colecciones de kromos</h3>
-                    <div class="card shadow">
-                        <div class="card-header py-3">
-                            <p class="text-primary m-0 fw-bold">Información de las colecciones</p>
+                    <h3 class="text-dark mb-1">Gestión de Kromos</h3>
+                    <div class="row">
+                        <div class="col">
+                            <div class="card shadow mb-3">
+                                <div class="card-header py-3">
+                                    <p class="text-primary m-0 fw-bold">Nueva Colección</p>
+                                </div>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="mb-3"><label class="form-label" for="username"><strong>Nombre</strong></label><input class="form-control" type="text" id="name" name="name"></div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="mb-3"><label class="form-label" for="email"><strong>Precio</strong><br></label><input class="form-control" type="text" id="price" name="price"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="mb-3"><label class="form-label" for="first_name"><strong>Activado</strong><br></label><input class="form-control" type="text" id="activated" name="activated"></div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="col"><a class="btn btn-primary" href="#kromo" data-bs-toggle="modal">Añadir Kromo</a>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <ul>
+                                                        <li>&lt;kromo 1&gt;</li>
+                                                        <li>&lt;kromo 2&gt;</li>
+                                                        <li>&lt;kromo 3&gt;</li>
+                                                        <li>&lt;kromo 4&gt;</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col"><button class="btn btn-primary new-collection" type="button">Añadir colección</button></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 text-nowrap">
-                                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Mostrar<select class="d-inline-block form-select form-select-sm">
-                                                <option value="10" selected="">10</option>
-                                                <option value="25">25</option>
-                                                <option value="50">50</option>
-                                                <option value="100">100</option>
-                                            </select>&nbsp;</label></div>
+                        <div class="col">
+                            <div class="card shadow mb-3">
+                                <div class="card-header py-3">
+                                    <p class="text-primary m-0 fw-bold">Modificar Colección</p>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Buscar"></label></div>
-                                </div>
-                            </div>
-                            <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
-                                <table class="table my-0" id="dataTable">
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre de la colección</th>
-                                            <th>Activa</th>
-                                            <th>Puntos</th>
-                                            <th>Existencias</th>
-                                            <th>Fecha Alta</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
-                                            <td>Activa</td>
-                                            <td>300</td>
-                                            <td>33</td>
-                                            <td>2008/11/28</td>
-                                            <td>Finalizada</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
-                                            <td>No Activa</td>
-                                            <td>150</td>
-                                            <td>47</td>
-                                            <td>2009/10/09<br></td>
-                                            <td>Parcialmente</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
-                                            <td>Activa&nbsp;</td>
-                                            <td>500</td>
-                                            <td>66</td>
-                                            <td>2009/01/12<br></td>
-                                            <td>No iniciada</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
-                                            <td>No Activa</td>
-                                            <td>250</td>
-                                            <td>41</td>
-                                            <td>2012/10/13<br></td>
-                                            <td>No iniciada</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
-                                            <td>No Activa</td>
-                                            <td>150</td>
-                                            <td>28</td>
-                                            <td>2011/06/07<br></td>
-                                            <td>Parcialmente</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
-                                            <td>Activa</td>
-                                            <td>100</td>
-                                            <td>61</td>
-                                            <td>2012/12/02<br></td>
-                                            <td>Finalizada</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td><strong>Nombre de la colección</strong></td>
-                                            <td><strong>Activa</strong></td>
-                                            <td><strong>Puntos</strong></td>
-                                            <td><strong>Existencias</strong></td>
-                                            <td><strong>Fecha Alta</strong></td>
-                                            <td><strong>Estado</strong></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 align-self-center">
-                                    <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Mostrando 1 to 5</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                                        <ul class="pagination">
-                                            <li class="page-item disabled"><a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
-                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>
-                                        </ul>
-                                    </nav>
+                                <div class="card-body">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="table-responsive table mt-2" id="dataTable-1" role="grid" aria-describedby="dataTable_info">
+                                                    <table class="table my-0" id="dataTable">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Nombre de la colección</th>
+                                                                <th>Edición</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
+                                                                <td><a href="#">Editar</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
+                                                                <td><a href="#">Editar</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
+                                                                <td><a href="#">Editar</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
+                                                                <td><a href="#">Editar</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
+                                                                <td><a href="#">Editar</a></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
+                                                                <td><a href="#">Editar</a></td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <td><strong>Nombre de la colección</strong></td>
+                                                                <td><strong>Edición</strong></td>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div></div>
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">
@@ -244,6 +237,64 @@
                 </div>
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="kromo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Crear Kromo</h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" for="username"><strong>Nombre&nbsp; &nbsp; &nbsp;</strong></label></div>
+                        <div class="col"><input type="text" id="name-1" name="username"></div>
+                    </div>
+                    <div class="mb-3"></div>
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" for="username"><strong>Precio&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</strong></label></div>
+                        <div class="col"><input type="text" id="name-2" name="username"></div>
+                    </div>
+                    <div class="mb-3"></div>
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" for="username"><strong>Cantidad Máxima&nbsp; &nbsp;&nbsp;</strong></label></div>
+                        <div class="col"><input type="text" id="name-3" name="username"></div>
+                    </div>
+                    <div class="mb-3"></div>
+                    <div class="mb-3"></div>
+                    <div class="row">
+                        <div class="col"><label class="form-label"></label><label class="form-label" for="username"><strong>Imagen</strong></label></div>
+                        <div class="col"><input type="file" id="file" accept=".jpg,.png" data-show-upload="true" data-show-caption="true"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Cerrar</button><button class="btn btn-primary" type="button">Guardar</button></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="kromo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Modificar Colección</h4><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" for="username"><strong>Nombre&nbsp; &nbsp; &nbsp;</strong></label></div>
+                        <div class="col"><input type="text" id="name-1" name="username"></div>
+                    </div>
+                    <div class="mb-3"></div>
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" for="username"><strong>Precio&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</strong></label></div>
+                        <div class="col"><input type="text" id="name-2" name="username"></div>
+                    </div>
+                    <div class="mb-3"></div>
+                    <div class="row">
+                        <div class="col"><label class="col-form-label" for="username"><strong>Estado</strong><br></label></div>
+                        <div class="col"><input type="text" id="name-3" name="username"></div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Cerrar</button><button class="btn btn-primary" type="button">Guardar</button></div>
+            </div>
+        </div>
     </div>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/theme.js"></script>
