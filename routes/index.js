@@ -14,6 +14,7 @@ const config = require('../tokenConfig')
 
 const { body } = require('express-validator');
 const helpers = require('../lib/helpers');
+const pool = require('../database');
 const publicDirectory = path.join(__dirname, '../public');
 const rootDirectory = path.join(__dirname, '../')
 
@@ -26,8 +27,8 @@ function validateToken(req, res, next) {
   if (token) {
     jwt.verify(token, app.get('TOKEN_SECRET'), (err, user) => {
       if (err) {
-        console.log('error de token')
-        res.clearCookie('token')
+        console.log('error de token');
+        res.clearCookie('token');
         res.sendFile('/login.html', { root: publicDirectory + '/login' })
       } else {
         console.log('pALANTE')
@@ -41,6 +42,10 @@ function validateToken(req, res, next) {
   }
 
 }
+
+router.get('/login', function (req, res) {
+  res.sendFile('/login.html', { root: publicDirectory + '/login' })
+});
 
 /* GET home page. */
 router.get('/', validateToken, function (req, res, next) {
@@ -57,10 +62,25 @@ router.get('/', validateToken, function (req, res, next) {
 
 });
 
+/* POST get info from database */
+router.post('/userInfo', validateToken, async function (req, res, next) {
+  console.log("voy a la db");
+  let user = req.user.username;
+
+  console.log(user);
+  var answer;
+  try {
+    answer = await pool.query('SELECT * FROM users WHERE username = ?', [user]);
+  }catch(error) {
+    return done(null, false, req.flash('message', 'The Username does not exists.'));
+  }
+
+  console.log("la answer es: " + answer[0]);
+  res.end(JSON.stringify(answer[0]));
+});
+
 /* POST sign in */
 router.post('/signin', function (req, res, next) {
-  console.log("SDKFSJDFKSJDFKLDSJFDLKSJDLKFDJSD");
-  req.session.user = 'a'
   console.log(req.session.id)
   console.log(req.session.user)
   console.log(req.body.password);
@@ -74,11 +94,7 @@ router.post('/signin', function (req, res, next) {
 });
 
 router.get('/getToken', (req, res) => {
-  console.log('Touken')
-  var a = Object.assign({}, req.user);
-  console.log(a)
-  const token = jwt.sign(a, app.get('TOKEN_SECRET'), { expiresIn: '30m' });
-  console.log('token panero')
+  const token = jwt.sign(Object.assign({}, req.user), app.get('TOKEN_SECRET'), { expiresIn: '30m' });
   res.cookie('token', token, { httpOnly: true });
   console.log('token galleta')
   res.redirect('/')
@@ -89,10 +105,17 @@ router.post('/signup', function (req, res, next) {
   console.log("ANDAMOS READY");
   console.log(req.body);
   passport.authenticate('local.signup', {
-    successRedirect: '/landingPageAdmin',
+    successRedirect: '/',
     failureRedirect: '/',
     failureFlash: true
   })(req, res, next);
+});
+
+router.post('/closeSession', validateToken, function (req, res) {
+  console.log("Cerrando sesion");
+  var token = req.cookies.token;
+  res.clearCookie('token');
+  res.sendFile('login.html', {root: publicDirectory+'/login'});
 });
 
 
