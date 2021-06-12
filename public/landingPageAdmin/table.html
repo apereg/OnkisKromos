@@ -4,16 +4,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Table - Control Admin Panel</title>
+    <title>Colecciones - Control Admin Panel</title>
+    <link rel="icon" href="https://image.flaticon.com/icons/png/512/2206/2206368.png" type="image/ico" crossorigin="anonymous">
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
     <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
     <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
     <link rel="stylesheet" href="assets/css/untitled.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="/landingPageAdmin/assets/js/scriptIndex.js" type="text/javascript"></script>
 </head>
 
-<body id="page-top">
+<body onload="start()" id="page-top">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
@@ -79,46 +82,46 @@
                                 <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="badge bg-danger badge-counter">7</span><i class="fas fa-envelope fa-fw"></i></a>
                                     <div class="dropdown-menu dropdown-menu-end dropdown-list animated--grow-in">
                                         <h6 class="dropdown-header">alerts center</h6><a class="dropdown-item d-flex align-items-center" href="#">
-                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="avatars/avatar4.jpeg">
+                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="/landingPageAdmin/assets/img/avatars/profile-pic.jpg">
                                                 <div class="bg-success status-indicator"></div>
                                             </div>
                                             <div class="fw-bold">
-                                                <div class="text-truncate"><span>Hi there! I am wondering if you can help me with a problem I've been having.</span></div>
+                                                <div class="text-truncate"><span>¡Hola! Me pregunto si puede ayudarme con un problema que he tenido.</span></div>
                                                 <p class="small text-gray-500 mb-0">Emily Fowler - 58m</p>
                                             </div>
                                         </a><a class="dropdown-item d-flex align-items-center" href="#">
-                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="avatars/avatar2.jpeg">
+                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="/landingPageAdmin/assets/img/avatars/profile-pic.jpg">
                                                 <div class="status-indicator"></div>
                                             </div>
                                             <div class="fw-bold">
-                                                <div class="text-truncate"><span>I have the photos that you ordered last month!</span></div>
+                                                <div class="text-truncate"><span>¡Tengo las fotos que ordenó el mes pasado!</span></div>
                                                 <p class="small text-gray-500 mb-0">Jae Chun - 1d</p>
                                             </div>
                                         </a><a class="dropdown-item d-flex align-items-center" href="#">
-                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="avatars/avatar3.jpeg">
+                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="/landingPageAdmin/assets/img/avatars/profile-pic.jpg">
                                                 <div class="bg-warning status-indicator"></div>
                                             </div>
                                             <div class="fw-bold">
-                                                <div class="text-truncate"><span>Last month's report looks great, I am very happy with the progress so far, keep up the good work!</span></div>
+                                                <div class="text-truncate"><span>El informe del mes pasado se ve muy bien, estoy muy contento con el progreso hasta ahora, ¡sigan con el buen trabajo!</span></div>
                                                 <p class="small text-gray-500 mb-0">Morgan Alvarez - 2d</p>
                                             </div>
                                         </a><a class="dropdown-item d-flex align-items-center" href="#">
-                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="avatars/avatar5.jpeg">
+                                            <div class="dropdown-list-image me-3"><img class="rounded-circle" src="/landingPageAdmin/assets/img/avatars/profile-pic.jpg">
                                                 <div class="bg-success status-indicator"></div>
                                             </div>
                                             <div class="fw-bold">
-                                                <div class="text-truncate"><span>Am I a good boy? The reason I ask is because someone told me that people say this to all dogs, even if they aren't good...</span></div>
-                                                <p class="small text-gray-500 mb-0">Chicken the Dog · 2w</p>
+                                                <div class="text-truncate"><span>Tengo un problema con los cromos de la Colección Valorant</span></div>
+                                                <p class="small text-gray-500 mb-0">Perro Sánchez · 2w</p>
                                             </div>
-                                        </a><a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+                                        </a><a class="dropdown-item text-center small text-gray-500" href="#">Mostrar Alerta</a>
                                     </div>
                                 </div>
                                 <div class="shadow dropdown-list dropdown-menu dropdown-menu-end" aria-labelledby="alertsDropdown"></div>
                             </li>
                             <div class="d-none d-sm-block topbar-divider"></div>
                             <li class="nav-item dropdown no-arrow">
-                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="d-none d-lg-inline me-2 text-gray-600 small">Adolfo Foces</span><img class="border rounded-circle img-profile" src="assets/img/avatars/profile-pic.jpg"></a>
-                                    <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="/profile.html"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Perfil</a><a class="dropdown-item" href="/manageKromos.html"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Gestión Kromos</a><a class="dropdown-item" href="/table.html#"><i class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Colecciones</a>
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="d-none d-lg-inline me-2 text-gray-600 small" id="nombre"></span><img class="border rounded-circle img-profile" src="assets/img/avatars/profile-pic.jpg"></a>
+                                    <div class="dropdown-menu shadow dropdown-menu-end animated--grow-in"><a class="dropdown-item" href="/landingPageAdmin/index.html"><i class="fas fa-user fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Dashboard</a><a class="dropdown-item" href="/landingPageAdmin/table.html"><i class="fas fa-cogs fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Colecciones</a><a class="dropdown-item" href="/landingPageAdmin/manageKromos.html"><i class="fas fa-list fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Gestión de Kromos</a>
                                         <div class="dropdown-divider"></div><a class="dropdown-item" href="/login.html"><i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400"></i>&nbsp;Cerrar sesión</a>
                                     </div>
                                 </div>
@@ -160,62 +163,62 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
-                                            <td>Activa</td>
-                                            <td>300</td>
-                                            <td>33</td>
-                                            <td>2008/11/28</td>
-                                            <td>Finalizada</td>
+                                            <td id="valorant_logo"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
+                                            <td id="valorant_active">Activa</td>
+                                            <td id="valorant_price">300</td>
+                                            <td id="valorant_total">33</td>
+                                            <td id="valorant_date">2008/11/28</td>
+                                            <td id="valorant_status">Finalizada</td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
-                                            <td>No Activa</td>
-                                            <td>150</td>
-                                            <td>47</td>
-                                            <td>2009/10/09<br></td>
-                                            <td>Parcialmente</td>
+                                            <td id="f1_logo"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
+                                            <td id="f1_active">No Activa</td>
+                                            <td id="f1_price">150</td>
+                                            <td id="f1_total">47</td>
+                                            <td id="f1_date">2009/10/09<br></td>
+                                            <td id="f1_status">Parcialmente</td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
-                                            <td>Activa&nbsp;</td>
-                                            <td>500</td>
-                                            <td>66</td>
-                                            <td>2009/01/12<br></td>
-                                            <td>No iniciada</td>
+                                            <td id="nba_logo"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
+                                            <td id="nba_active">Activa&nbsp;</td>
+                                            <td id="nba_price">500</td>
+                                            <td id="nba_total">66</td>
+                                            <td id="nba_date">2009/01/12<br></td>
+                                            <td id="nba_status">No iniciada</td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
-                                            <td>No Activa</td>
-                                            <td>250</td>
-                                            <td>41</td>
-                                            <td>2012/10/13<br></td>
-                                            <td>No iniciada</td>
+                                            <td id="cs_logo"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
+                                            <td id="cs_active">No Activa</td>
+                                            <td id="cs_price">250</td>
+                                            <td id="cs_total">41</td>
+                                            <td id="cs_date">2012/10/13<br></td>
+                                            <td id="cs_status">No iniciada</td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
-                                            <td>No Activa</td>
-                                            <td>150</td>
-                                            <td>28</td>
-                                            <td>2011/06/07<br></td>
-                                            <td>Parcialmente</td>
+                                            <td id="rocket_logo"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
+                                            <td id="rocket_active">No Activa</td>
+                                            <td id="rocket_price">150</td>
+                                            <td id="rocket_total">28</td>
+                                            <td id="rocket_date">2011/06/07<br></td>
+                                            <td id="rocket_status">Parcialmente</td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
-                                            <td>Activa</td>
-                                            <td>100</td>
-                                            <td>61</td>
-                                            <td>2012/12/02<br></td>
-                                            <td>Finalizada</td>
+                                            <td id="super_logo"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
+                                            <td id="super_active">Activa</td>
+                                            <td id="super_price">100</td>
+                                            <td id="super_total">61</td>
+                                            <td id="super_date">2012/12/02<br></td>
+                                            <td id="super_status">Finalizada</td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <td><strong>Nombre de la colección</strong></td>
-                                            <td><strong>Activa</strong></td>
-                                            <td><strong>Puntos</strong></td>
-                                            <td><strong>Existencias</strong></td>
-                                            <td><strong>Fecha Alta</strong></td>
-                                            <td><strong>Estado</strong></td>
+                                            <td id="collection_name"><strong>Nombre de la colección</strong></td>
+                                            <td id="collection_active"><strong>Activa</strong></td>
+                                            <td id="collection_price"><strong>Puntos</strong></td>
+                                            <td id="collection_total"><strong>Existencias</strong></td>
+                                            <td id="collection_date"><strong>Fecha Alta</strong></td>
+                                            <td id="collection_status"><strong>Estado</strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>
