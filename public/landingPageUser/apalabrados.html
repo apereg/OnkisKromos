@@ -4,22 +4,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Blank Page - Control User Panel</title>
+    <title>Apalabratres by Onkisko</title>
     <meta name="description" content="Main page del socio">
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
-    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
-    <link rel="stylesheet" href="assets/css/Footer-Dark.css">
-    <link rel="stylesheet" href="assets/css/Team-Boxed.css">
-    <link rel="stylesheet" href="assets/css/user-panel.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/css/Footer-Dark.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/css/Team-Boxed.css">
+    <link rel="stylesheet" href="/landingPageUser/assets/css/user-panel.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="javascripts/script.js" language="javascript" type="text/javascript"></script>
+    <script src="javascripts/apalabrados.js" language="javascript" type="text/javascript"></script>
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="start()">
     <div id="wrapper">
         <nav class="navbar navbar-dark align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0">
             <div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#">
@@ -54,8 +54,8 @@
                                 </div>
                             </li>
                             <li class="nav-item dropdown no-arrow mx-1">
-                                <div class="nav-item dropdown show no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="true" data-bs-toggle="dropdown" href="#"><span class="badge bg-danger badge-counter">3+</span><i class="fas fa-bell fa-fw"></i></a>
-                                    <div class="dropdown-menu dropdown-menu-end show dropdown-list animated--grow-in">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="badge bg-danger badge-counter">3+</span><i class="fas fa-bell fa-fw"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end dropdown-list animated--grow-in">
                                         <h6 class="dropdown-header">alerts center</h6><a class="dropdown-item d-flex align-items-center" href="#">
                                             <div class="me-3">
                                                 <div class="bg-primary icon-circle"><i class="fas fa-file-alt text-white"></i></div>
@@ -82,8 +82,8 @@
                                 </div>
                             </li>
                             <li class="nav-item dropdown no-arrow mx-1">
-                                <div class="nav-item dropdown show no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="true" data-bs-toggle="dropdown" href="#"><span class="badge bg-danger badge-counter">7</span><i class="fas fa-envelope fa-fw"></i></a>
-                                    <div class="dropdown-menu dropdown-menu-end show dropdown-list animated--grow-in">
+                                <div class="nav-item dropdown no-arrow"><a class="dropdown-toggle nav-link" aria-expanded="false" data-bs-toggle="dropdown" href="#"><span class="badge bg-danger badge-counter">7</span><i class="fas fa-envelope fa-fw"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-end dropdown-list animated--grow-in">
                                         <h6 class="dropdown-header">alerts center</h6><a class="dropdown-item d-flex align-items-center" href="#">
                                             <div class="dropdown-list-image me-3"><img class="rounded-circle" src="assets/img/avatars/profile-pic.jpg">
                                                 <div class="bg-success status-indicator"></div>
@@ -135,34 +135,37 @@
                 <div class="container-fluid">
                     <h3 class="text-dark mb-1">Apalabratres</h3>
                 </div>
-                <div class="container" id="mainCol">
+                <div class="container">
                     <div class="row">
                         <div class="col">
                             <h1>Apalabratres by Onkisko - Gana hasta 225 puntos si aciertas todas<br></h1>
                             <h1>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;¡ Buena Suerte !</h1>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" id="mainRow">
                         <div class="col">
-                            <p id="definition1"><br>¡Este ejercicio es muy simple! Nosotros te proponemos ciertas preguntas y tú tratas de acertarlas. Si las aciertas ¡ganas puntos! Eso si... no vale buscarlo en Google. ¿Serás capaz de adivinarlas todas?<br><br></p><button class="btn btn-primary" id="preguntas" type="button">Cambiar preguntas</button>
+                            <p><br>Responde a todas las preguntas y comprueba si sabes lo necesario como para merecer tu nuevo cromo favorito o cambia las preguntas, igual el nuevo tema te favorece más...<br><br></p><button class="btn btn-primary" id="preguntas" type="button" onclick="newQuestions()">Cambiar preguntas</button>
+                            <div class="row">
+                                <div class="col"><button class="btn btn-primary" type="button" style="margin-top: 15px;margin-left: 100px;" onclick="checkAnswers()">Comprobar soluciones</button></div>
+                            </div>
                         </div>
                         <div class="col">
                             <div class="row">
-                                <div class="col"><label class="form-label">Pregunta 1</label>
+                                <div class="col" style="margin-top: 26px;"><label class="form-label" id="definition1">Pregunta 1</label>
                                     <div class="row">
                                         <div class="col"><input type="text" class="form-control" placeholder="Respuesta"><span>&nbsp;</span></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col" id="definition2"><label class="form-label">Pregunta 2</label>
+                                <div class="col"><label class="form-label" id="definition2">Pregunta 2</label>
                                     <div class="row">
                                         <div class="col"><input type="text" class="form-control" placeholder="Respuesta"><span>&nbsp;</span></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col" id="definition3"><label class="form-label">Pregunta 3</label>
+                                <div class="col"><label class="form-label" id="definition3">Pregunta 3</label>
                                     <div class="row">
                                         <div class="col"><input type="text" class="form-control" placeholder="Respuesta"><span>&nbsp;</span></div>
                                     </div>
@@ -197,9 +200,9 @@
             </footer>
         </div><a class="border rounded d-inline scroll-to-top" href="#page-top"><i class="fas fa-angle-up"></i></a>
     </div>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/theme.js"></script>
+    <script src="/landingPageUser/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="/landingPageUser/assets/js/theme.js"></script>
 </body>
 
 </html>

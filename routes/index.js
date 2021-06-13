@@ -15,6 +15,7 @@ const config = require('../tokenConfig')
 const { body } = require('express-validator');
 const helpers = require('../lib/helpers');
 const pool = require('../database');
+const { request } = require('http');
 const publicDirectory = path.join(__dirname, '../public');
 const rootDirectory = path.join(__dirname, '../')
 
@@ -33,7 +34,7 @@ function validateToken(req, res, next) {
       } else {
         console.log('Token valido, se genera otro para mantener los 30 minutos de persistencia.')
         req.user = user;
-        res.clearCookie('token')
+        res.clearCookie('token');
         if(req.user.iat) delete req.user.iat
         if(req.user.exp) delete req.user.exp
         const token = jwt.sign(Object.assign({}, req.user), app.get('TOKEN_SECRET'), { expiresIn: 1800 });
@@ -102,18 +103,17 @@ router.get('/getToken', generateToken, (req, res) => {
   res.redirect('/')
 });
 
-router.post('/closeSession', validateToken, function (req, res) {
-  console.log("=========================================================Cerrando sesion");
-  res.clearCookie('token')
-  res.redirect('/')
+router.get('/closeSession', function (req, res) {
+  console.log("Cerrando sesion...");
+  res.clearCookie('token');
+  //location.reload();
+  res.redirect('/login');
 });
 
 /* POST get info from database */
 router.post('/userInfo', validateToken, async function (req, res, next) {
-  console.log("voy a la db");
+  console.log("Buscando informacion del usuario en la base de datos...");
   let user = req.user.username;
-
-  console.log(user);
   var answer;
   try {
     answer = await pool.query('SELECT * FROM users WHERE username = ?', [user]);
@@ -121,16 +121,13 @@ router.post('/userInfo', validateToken, async function (req, res, next) {
     return done(null, false, req.flash('message', 'The Username does not exists.'));
   }
   
-  console.log("la answer es: " + answer[0]);
   res.end(JSON.stringify(answer[0]));
 });
 
 /* POST get info from database collections*/
 router.post('/userAlbums', validateToken, async function (req, res) {
-  console.log("voy a la db de las colecciones");
+  console.log("Buscando informacion de los albums en la base de datos...");
   let iduser = req.user.idusers, output=[];
-
-  console.log(iduser);
   var answerNumCol, answerNumColUser, percentage;
   try {
     answerNumCol = await pool.query('SELECT * FROM collections');
@@ -139,9 +136,7 @@ router.post('/userAlbums', validateToken, async function (req, res) {
     console.log(error);
     return done(null, false, req.flash('message', 'The collection does not exist.'));
   }
-  console.log(answerNumColUser.length, answerNumCol.length);
   percentage = Math.round((answerNumColUser.length/answerNumCol.length)*100)/100;
-  console.log("el porcentaje: " + percentage);
   output.push(percentage);
 
   var answerIdAlb, numCol = [], queryAux;
@@ -152,17 +147,15 @@ router.post('/userAlbums', validateToken, async function (req, res) {
       numCol.push(queryAux.length);
     }
   }catch(error) {
-    console.log(error);
     return done(null, false, req.flash('message', 'The albumcards table does not exist.'));
   }
   output.push(answerIdAlb);
   output.push(numCol);
-  console.log("el output final! :): " + output);
   res.end(JSON.stringify(output));
 });
 
-/* POST get info from database useralbum*/
-router.post('/questions', validateToken, async function (req, res) {
+/* POST get three random questions from db table. */
+router.post('/newQuestions', validateToken, async function (req, res) {
   var user = req.user.username;
   console.log('Buscando 3 preguntas al azar en la base de datos para ' +user+ '.');
 
@@ -173,9 +166,95 @@ router.post('/questions', validateToken, async function (req, res) {
     return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
   }
 
-  console.log("la answer es: " + queryResult[0]);
+  console.log('No te chives pero las preguntas son:')
+  console.log(queryResult[0].question+ ' -> ' + queryResult[0].answer)
+  console.log(queryResult[1].question+ ' -> ' + queryResult[1].answer)
+  console.log(queryResult[2].question+ ' -> ' + queryResult[2].answer)
+
+  res.end(JSON.stringify(queryResult));
+});
+
+/* POST get info from database collections*/
+router.post('/collections', validateToken, async function (req, res) {
+  console.log('Buscando informacion de las colecciones en la base de datos...');
+
+  var queryResult;
+  try {
+    queryResult = await pool.query('SELECT * FROM collections;');
+  }catch(error) {
+    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+  }
+  console.log("Colecciones buscada");
   res.end(JSON.stringify(queryResult));
 
+});
+
+/* POST get info from database collections cards*/
+router.post('/cardsCollections', validateToken, async function (req, res) {
+  console.log('Buscando informacion de los kromos en la base de datos...');
+  var ids = req.body.id.split(",");
+
+  var queryResult, output = [];
+  try {
+    for(let i=0; i<ids.length; i++) {
+      queryResult = await pool.query('SELECT sum(remainingUnits) FROM cards where idcollections = ?;', ids[i]);
+      var aux = JSON.stringify(queryResult);
+      var number = aux.split(":")[1].split("}")[0]
+      output.push({"id": ids[i], "result": number});
+    }
+  }catch(error) {
+    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+  }
+
+  res.end(JSON.stringify(output));
+
+});
+
+
+router.post('/submit', validateToken, (req, res) => {
+
+  const secretKey = '6Ldn_CsbAAAAAKVB9QJq2PYULMsYZ1mMaD_1dn8b';
+  const userKey = req.params.captcha;
+
+  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.socket.remoteAddress}`;
+
+  request(verifyUrl, (err, response, body) => {
+    body = JSON.parse(body);
+
+    if(body.success !== undefined && !body.success){
+      return res.json({"success": false, "msg":"Ha habido un error, intentalo de nuevo"});
+    }else{
+      return res.json({"success": true, "msg":"Has ganado 50 monedas!"});
+    }
+  });
+
+  /*
+    //captcha verify
+    console.log('hola');
+    const secretKey = '6Ldn_CsbAAAAAKVB9QJq2PYULMsYZ1mMaD_1dn8b';
+    const userKey = req.params.captcharesponse;
+
+    const captchaVerified = await fetch('https://www.google.com/recaptcha/api/siteverify?secret=' + secretKey + '&response=' + userKey, {
+            method: "POST"
+        })
+        .then(_res => _res.json());
+
+    if (captchaVerified.success === true) {
+        //Add coins
+        console.log("Has ganado 50 monedas!");
+
+    } else {
+        console.log("Ha habido un error, intentalo de nuevo");
+    }
+    res.end();
+    */
+});
+
+
+router.post('/addPoints',validateToken, async(req, res) => {
+  console.log('Se deberian dar ' +req.body.points+ ' al usuario')
+  //todo add points
+  res.end();
 });
 
 module.exports = router;

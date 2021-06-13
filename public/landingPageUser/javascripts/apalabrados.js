@@ -4,63 +4,79 @@ function start(){
     newQuestions()
 }
 
-function newQuestions(){
-    document.getElementById('mainCol').getElementsByTagName('input')[0].value = ''
-    document.getElementById('mainCol').getElementsByTagName('input')[1].value = ''
-    document.getElementById('mainCol').getElementsByTagName('input')[2].value = ''
+async function newQuestions(){
+    document.getElementById('mainRow').getElementsByTagName('input')[0].value = ''
+    document.getElementById('mainRow').getElementsByTagName('input')[1].value = ''
+    document.getElementById('mainRow').getElementsByTagName('input')[2].value = ''
 
-    let questions = []
-    $.post('/newQuestions', function (data, status){
+    await loadNewQuestionFromServer()
+}
+
+async function loadNewQuestionFromServer(){
+    await $.post('/newQuestions', function (data, status) {
         if (status === 'success') {
-            const dataParsed = JSON.parse(data)
-            questions.push(dataParsed.question[0])
-            questions.push(dataParsed.question[1])
-            questions.push(dataParsed.question[2])
-            ANSWERS= []
-            ANSWERS.push(dataParsed.answer[0])
-            ANSWERS.push(dataParsed.answer[1])
-            ANSWERS.push(dataParsed.answer[2])
+            const dataParsed = $.parseJSON(data)
+            ANSWERS = [dataParsed[0].answer, dataParsed[1].answer, dataParsed[2].answer]
+            document.getElementById('definition1').innerText = dataParsed[0].question
+            document.getElementById('definition2').innerText = dataParsed[1].question
+            document.getElementById('definition3').innerText = dataParsed[2].question
         } else {
-            alert('Error en el get al servidor')
+            swal("¡Oh no!", "Ha ocurrido un error al solicitar las preguntas al servidor, ¡Intentalo de nuevo!", "error", {
+                button: "¡Aceptar!",
+            });
         }
     })
-    document.getElementById('definition1').innerText = questions[0]
-    document.getElementById('definition2').innerText = questions[1]
-    document.getElementById('definition3').innerText = questions[2]
 }
 
 function checkAnswers(){
     let possibleAnswers = []
-    possibleAnswers.push(document.getElementById('mainCol').getElementsByTagName('input')[0].value)
-    possibleAnswers.push(document.getElementById('mainCol').getElementsByTagName('input')[1].value)
-    possibleAnswers.push(document.getElementById('mainCol').getElementsByTagName('input')[2].value)
-
-    console.log(possibleAnswers)
+    possibleAnswers.push(document.getElementById('mainRow').getElementsByTagName('input')[0].value)
+    possibleAnswers.push(document.getElementById('mainRow').getElementsByTagName('input')[1].value)
+    possibleAnswers.push(document.getElementById('mainRow').getElementsByTagName('input')[2].value)
 
     let hits = 0
     for (let i = 0; i < ANSWERS.length; i++)
         if(ANSWERS[i].toUpperCase() === possibleAnswers[i].toUpperCase())
             hits++
 
-    let text = ''
+    let points = 0
+
     switch (hits){
         case 0:
-            text = 'No has acertado ninguna palabra.'
+            swal("¡Deberías leer más!", "No has acertado ninguna palabra, ¡Intentalo de nuevo!", "error", {
+                button: "¡Aceptar!",
+            });
             break;
         case 1:
-            text = 'Acertaste una.'
+            swal("¡No está mal!", "Has acertado una palabra, disfruta de tus 50 puntos", "success", {
+                button: "¡Gracias!",
+            });
+            points = 50
             break;
         case 2:
-            text = 'Acertaste dos.'
+            swal("¡Te defiendes bien!", "Has acertado dos palabras, disfruta de tus 125 puntos", "success", {
+                button: "¡Gracias!",
+            });
+            points = 125
             break;
         case 3:
-            text = 'Acertaste tres.'
+            swal("¡Eres todo un cerebrito!", "Has acertado todas las palabras, disfruta de tus 225 puntos", "success", {
+                button: "¡Gracias!",
+            });
+            points = 225
             break;
         default:
-            text = 'error'
+            swal("¡Oh no!", "Ha ocurrido un error al comprobar las preguntas, ¡Intentalo de nuevo!", "error", {
+                button: "¡Aceptar!",
+            });
     }
 
-    alert(text)
-
+    givePoints(points)
     newQuestions()
+}
+
+async function givePoints(points){
+    await ($.post('/addPoints', {points: points}, function (data, status) {
+        if (status !== 'success') swal("¡Oh no!", "Ha ocurrido un error al otorgar los puntos, ¡Intentalo de nuevo!", "error", {button: "¡Aceptar!",});
+    }));
 }

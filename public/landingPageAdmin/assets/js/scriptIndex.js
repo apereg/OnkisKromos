@@ -49,9 +49,6 @@ function writeData(data) {
 function writeDataAlbum(data) {
     document.getElementById("percentaje").innerHTML = data[0]*100+"%";
     document.getElementById("percentajeGraphic").style.width = data[0]*100+"%";
-    console.log(data[1][0].idcollection);
-    console.log(data[2][0]);
-
     var array = data[1];
     for (let i = 0; i < array.length; i++) {
         switch (array[i].idcollection) {
