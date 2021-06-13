@@ -8,26 +8,10 @@ async function start(){
     writeDataAlbum(auxLoadAlbum);
 }
 
-async function closeSession() {
-    console.log("Cerrando la sesion");
-    return $.post(
-        "/closeSession",
-        {session: "session"}
-    );
-}
-
 async function loadData() {
     console.log("Accediendo a db js");
     return $.post(
         "/userInfo",
-        {session: "session"}
-    );
-}
-
-async function loadDataAlbum() {
-    console.log("Accediendo a db js album");
-    return $.post(
-        "/userAlbums",
         {session: "session"}
     );
 }
@@ -46,6 +30,14 @@ function writeData(data) {
     document.getElementById("nombre").innerHTML = data.name.concat(" "+data.surnames);
 }
 
+async function loadDataAlbum() {
+    console.log("Accediendo a db js album");
+    return $.post(
+        "/userAlbums",
+        {session: "session"}
+    );
+}
+
 function writeDataAlbum(data) {
     document.getElementById("percentaje").innerHTML = data[0]*100+"%";
     document.getElementById("percentajeGraphic").style.width = data[0]*100+"%";
@@ -57,6 +49,7 @@ function writeDataAlbum(data) {
                 document.getElementById("formulaPercentaje").style.width = Math.round((data[2][i]/10)*100)+"%";
                 break;
             case 2:
+                console.log(data[2]);
                 document.getElementById("csNumber").innerHTML = Math.round((data[2][i]/10)*100)+"%";
                 document.getElementById("csPercentaje").style.width = Math.round((data[2][i]/10)*100)+"%";
                 break;
@@ -76,4 +69,12 @@ function writeDataAlbum(data) {
                 break;
         }
     }
+}
+
+async function closeSession() {
+    console.log("Cerrando la sesion");
+    return $.post(
+        "/closeSession",
+        {session: "session"}
+    );
 }

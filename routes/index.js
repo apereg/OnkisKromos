@@ -18,6 +18,9 @@ const pool = require('../database');
 const { request } = require('http');
 const publicDirectory = path.join(__dirname, '../public');
 const rootDirectory = path.join(__dirname, '../')
+const fetch = require('node-fetch');
+const fs = require("fs");
+const multer = require('multer');
 
 app.set('TOKEN_SECRET', config.TOKEN_SECRET);
 
@@ -29,14 +32,16 @@ function validateToken(req, res, next) {
     jwt.verify(token, app.get('TOKEN_SECRET'), (err, user) => {
       if (err) {
         console.log('El token no es valido, eliminando y redirigiendo al login.');
+        console.log(publicDirectory)
+        console.log('aaaaaaaaa')
         res.clearCookie('token');
-        res.sendFile('/login.html', { root: publicDirectory + '/login' })
+        res.redirect('/')
       } else {
         console.log('Token valido, se genera otro para mantener los 30 minutos de persistencia.')
         req.user = user;
         res.clearCookie('token');
-        if(req.user.iat) delete req.user.iat
-        if(req.user.exp) delete req.user.exp
+        if (req.user.iat) delete req.user.iat
+        if (req.user.exp) delete req.user.exp
         const token = jwt.sign(Object.assign({}, req.user), app.get('TOKEN_SECRET'), { expiresIn: 1800 });
         res.cookie('token', token, { httpOnly: true });
         next()
@@ -44,14 +49,14 @@ function validateToken(req, res, next) {
     });
   } else {
     console.log('No hay token, redirigiendo al Login.')
-    res.sendFile('/login.html', { root: publicDirectory + '/login' })
+    res.redirect('/login')
   }
 }
 
-function generateToken(req, res, next){
-  console.log('Generando token para ' +req.user.username+ '.')
-  if(req.user.iat) delete req.user.iat
-  if(req.user.exp) delete req.user.exp
+function generateToken(req, res, next) {
+  console.log('Generando token para ' + req.user.username + '.')
+  if (req.user.iat) delete req.user.iat
+  if (req.user.exp) delete req.user.exp
   const token = jwt.sign(Object.assign({}, req.user), app.get('TOKEN_SECRET'), { expiresIn: 1800 });
   res.cookie('token', token, { httpOnly: true });
   next()
@@ -59,7 +64,7 @@ function generateToken(req, res, next){
 
 /* GET home page. */
 router.get('/', validateToken, function (req, res, next) {
-  console.log('Se redirige al usuario ' +req.user.username+ ' a la ventana de ' +req.user.rol + '.')
+  console.log('Se redirige al usuario ' + req.user.username + ' a la ventana de ' + req.user.rol + '.')
   if (req.user.rol === 'Administrador') {
     res.sendFile('index.html', { root: publicDirectory + '/landingPageAdmin' });
     console.log("He iniciado sesion como admin");
@@ -107,7 +112,7 @@ router.get('/closeSession', function (req, res) {
   console.log("Cerrando sesion...");
   res.clearCookie('token');
   //location.reload();
-  res.redirect('/login');
+  res.redirect('/');
 });
 
 /* POST get info from database */
@@ -117,26 +122,27 @@ router.post('/userInfo', validateToken, async function (req, res, next) {
   var answer;
   try {
     answer = await pool.query('SELECT * FROM users WHERE username = ?', [user]);
-  }catch(error) {
+  } catch (error) {
     return done(null, false, req.flash('message', 'The Username does not exists.'));
   }
-  
+
   res.end(JSON.stringify(answer[0]));
 });
+
 
 /* POST get info from database collections*/
 router.post('/userAlbums', validateToken, async function (req, res) {
   console.log("Buscando informacion de los albums en la base de datos...");
-  let iduser = req.user.idusers, output=[];
+  let iduser = req.user.idusers, output = [];
   var answerNumCol, answerNumColUser, percentage;
   try {
     answerNumCol = await pool.query('SELECT * FROM collections');
     answerNumColUser = await pool.query('SELECT * FROM albums WHERE iduser = ?', [iduser]);
-  }catch(error) {
+  } catch (error) {
     console.log(error);
     return done(null, false, req.flash('message', 'The collection does not exist.'));
   }
-  percentage = Math.round((answerNumColUser.length/answerNumCol.length)*100)/100;
+  percentage = Math.round((answerNumColUser.length / answerNumCol.length) * 100) / 100;
   output.push(percentage);
 
   var answerIdAlb, numCol = [], queryAux;
@@ -146,7 +152,7 @@ router.post('/userAlbums', validateToken, async function (req, res) {
       queryAux = await pool.query('SELECT * FROM albumcards WHERE idalbum = ?', [answerIdAlb[i].idalbums]);
       numCol.push(queryAux.length);
     }
-  }catch(error) {
+  } catch (error) {
     return done(null, false, req.flash('message', 'The albumcards table does not exist.'));
   }
   output.push(answerIdAlb);
@@ -157,21 +163,39 @@ router.post('/userAlbums', validateToken, async function (req, res) {
 /* POST get three random questions from db table. */
 router.post('/newQuestions', validateToken, async function (req, res) {
   var user = req.user.username;
-  console.log('Buscando 3 preguntas al azar en la base de datos para ' +user+ '.');
+  console.log('Buscando 3 preguntas al azar en la base de datos para ' + user + '.');
 
   var queryResult;
   try {
     queryResult = await pool.query('SELECT question, answer FROM questions ORDER BY RAND() LIMIT 3;');
-  }catch(error) {
+  } catch (error) {
     return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
   }
 
   console.log('No te chives pero las preguntas son:')
-  console.log(queryResult[0].question+ ' -> ' + queryResult[0].answer)
-  console.log(queryResult[1].question+ ' -> ' + queryResult[1].answer)
-  console.log(queryResult[2].question+ ' -> ' + queryResult[2].answer)
+  console.log(queryResult[0].question + ' -> ' + queryResult[0].answer)
+  console.log(queryResult[1].question + ' -> ' + queryResult[1].answer)
+  console.log(queryResult[2].question + ' -> ' + queryResult[2].answer)
 
   res.end(JSON.stringify(queryResult));
+});
+
+router.post('/cardsIdAlbums', validateToken, async function (req, res) {
+  console.log('Buscando informacion de las kromos en la base de datos...');
+  var ids = req.body.id.split(",");
+
+  var queryResult, output = [];
+  try {
+    for (let i = 0; i < ids.length; i++) {
+      queryResult = await pool.query('SELECT * FROM albumcards where idalbum = ?;', ids[i]);
+      output.push(queryResult.length);
+    }
+  } catch (error) {
+    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+  }
+
+  res.end(JSON.stringify(output));
+
 });
 
 /* POST get info from database collections*/
@@ -181,11 +205,29 @@ router.post('/collections', validateToken, async function (req, res) {
   var queryResult;
   try {
     queryResult = await pool.query('SELECT * FROM collections;');
-  }catch(error) {
+  } catch (error) {
     return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
   }
   console.log("Colecciones buscada");
   res.end(JSON.stringify(queryResult));
+
+});
+
+router.post('/collectionsId', validateToken, async function (req, res) {
+  console.log('Buscando informacion de las colecciones en la base de datos...');
+  var ids = req.body.id.split(",");
+
+  var queryResult, output = [];
+  try {
+    for (let i = 0; i < ids.length; i++) {
+      queryResult = await pool.query('SELECT * FROM collections where idcollections = ?;', ids[i]);
+      output.push(queryResult);
+    }
+  } catch (error) {
+    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+  }
+
+  res.end(JSON.stringify(output));
 
 });
 
@@ -196,13 +238,13 @@ router.post('/cardsCollections', validateToken, async function (req, res) {
 
   var queryResult, output = [];
   try {
-    for(let i=0; i<ids.length; i++) {
+    for (let i = 0; i < ids.length; i++) {
       queryResult = await pool.query('SELECT sum(remainingUnits) FROM cards where idcollections = ?;', ids[i]);
       var aux = JSON.stringify(queryResult);
       var number = aux.split(":")[1].split("}")[0]
-      output.push({"id": ids[i], "result": number});
+      output.push({ "id": ids[i], "result": number });
     }
-  }catch(error) {
+  } catch (error) {
     return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
   }
 
@@ -211,50 +253,187 @@ router.post('/cardsCollections', validateToken, async function (req, res) {
 });
 
 
-router.post('/submit', validateToken, (req, res) => {
-
+router.post('/submit', validateToken, async function (req, res) {
+  //captcha verify
+  console.log("Vamos a comprobar el captcha");
   const secretKey = '6Ldn_CsbAAAAAKVB9QJq2PYULMsYZ1mMaD_1dn8b';
-  const userKey = req.params.captcha;
+  const userKey = req.body.captcha;
+  const remoteIp = req.socket.remoteAddress;
+  var captchaVerified;
 
-  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${req.body.captcha}&remoteip=${req.socket.remoteAddress}`;
+  try {
+    captchaVerified = await fetch('https://www.google.com/recaptcha/api/siteverify?secret=' + secretKey + '&response=' + userKey + '&remoteip=' + remoteIp, {
+      method: "POST"
+    })
+      .then(_res => _res.json());
+  } catch (error) {
+    console.log(error);
+  }
 
-  request(verifyUrl, (err, response, body) => {
-    body = JSON.parse(body);
+  console.log(captchaVerified);
+  var solucion = false;
 
-    if(body.success !== undefined && !body.success){
-      return res.json({"success": false, "msg":"Ha habido un error, intentalo de nuevo"});
-    }else{
-      return res.json({"success": true, "msg":"Has ganado 50 monedas!"});
+  if (captchaVerified.success === true) {
+    //Add coins
+    solucion = true;
+    console.log("Has ganado 50 monedas!");
+
+  } else {
+    solucion = false;
+    console.log("Ha habido un error, intentalo de nuevo");
+  }
+  res.end(JSON.stringify(solucion));
+
+});
+
+/* POST points to user */
+router.post('/addPoints', validateToken, async (req, res) => {
+  var points = req.body.points;
+  let user = req.user.username;
+  console.log('Se deberian dar ' + points + ' al usuario ' + user)
+  var query = "UPDATE users SET points = points + " + points + ",pointsGameWin = pointsGameWin + " + points + " where username = '" + user + "'";
+  try {
+    queryResult = await pool.query(query);
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Error al añadir puntos.'));
+  }
+});
+
+/* POST info collections to DB */
+router.post('/collectionAdd', validateToken, async (req, res) => {
+  var kromos = req.body.kromos.split(',');
+  var collection = req.body.collection.split('-');
+  var kromosSplitted = [];
+
+  for (let i = 0; i < kromos.length; i++) {
+    kromosSplitted.push(kromos[i].split('-'));
+  }
+
+  var queryAddCollections, queryAddKromos;
+  console.log("La data de kromos: " + kromos + " y la de collection: " + collection);
+  try {
+    /* Query to store the collections */
+    var query = "INSERT INTO collections (name, activated, price) VALUES ('" + collection[0] + "'," + collection[2] + "," + collection[1] + ")";
+    queryAddCollections = await pool.query(query);
+    console.log(queryAddCollections.insertId);
+
+    /* Query to store the cards */
+    for (let i = 0; i < kromosSplitted.length; i++) {
+      var queryKromos = "INSERT INTO cards (name, price, maxUnits, remainingUnits, imagePath, idcollections) VALUES ('" + kromosSplitted[i][0] + "'," + kromosSplitted[i][1] + "," + kromosSplitted[i][2] + "," + kromosSplitted[i][2] + ",'" + kromosSplitted[i][3] + "'," + queryAddCollections.insertId + ")";
+      queryAddKromos = await pool.query(queryKromos);
+      console.log(queryAddKromos);
     }
+
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Error while trying to add collections to DB'));
+  }
+
+
+});
+
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '../public/uploads'),
+  filename:  (req, file, cb) => {
+      cb(null, file.originalname);
+  }
+})
+
+const uploadImage = multer({
+  storage,
+  limits: {fileSize: 1000000}
+}).single('image');
+
+app.use(multer({storage}).single('image'));
+
+router.post('/upload', async(req, res) => {
+  uploadImage(req, res, (err) => {
+      if (err) {
+          err.message = 'The file is so heavy for my service';
+          return res.send(err);
+      }
+      console.log(req.body);
+      console.log(uploadImage)
+      console.log(storage)
+      res
+        .status(200)
+        .contentType("text/plain")
+        .end("File uploaded!");
   });
-
-  /*
-    //captcha verify
-    console.log('hola');
-    const secretKey = '6Ldn_CsbAAAAAKVB9QJq2PYULMsYZ1mMaD_1dn8b';
-    const userKey = req.params.captcharesponse;
-
-    const captchaVerified = await fetch('https://www.google.com/recaptcha/api/siteverify?secret=' + secretKey + '&response=' + userKey, {
-            method: "POST"
-        })
-        .then(_res => _res.json());
-
-    if (captchaVerified.success === true) {
-        //Add coins
-        console.log("Has ganado 50 monedas!");
-
-    } else {
-        console.log("Ha habido un error, intentalo de nuevo");
-    }
-    res.end();
-    */
 });
 
 
-router.post('/addPoints',validateToken, async(req, res) => {
-  console.log('Se deberian dar ' +req.body.points+ ' al usuario')
-  //todo add points
-  res.end();
+
+/*
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    console.log("estoy");
+    cb(null, '/carpeta')
+  },
+  filename: (req, file, cb) =>{
+    console.log(file);
+    cb(null, Date.now() + path.extname(file.originalname))
+  }
+});
+
+const upload = multer({storage: storage})
+
+router.post("/upload", upload.single("image"), (req, res) =>{
+  console.log(upload)
+  //ni puta idea, no llega nunca a imprimirse el estoy de arriba
+});*/
+
+router.get('/landingPageUser', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/index.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/index', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/index.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/buysell', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/buysell.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/table', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/table.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/buysell', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/buysell.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/games', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/games.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/captcha', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/captcha.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/apalabrados', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/apalabrados.html', { root: publicDirectory })
+});
+
+router.get('/landingPageUser/hangman', validateToken, function (req, res) {
+  res.sendFile('/landingPageUser/hangman.html', { root: publicDirectory })
+});
+
+router.get('/landingPageAdmin', validateToken, function (req, res) {
+  res.sendFile('/landingPageAdmin/index.html', { root: publicDirectory })
+});
+
+router.get('/landingPageAdmin/index', validateToken, function (req, res) {
+  res.sendFile('/landingPageAdmin/index.html', { root: publicDirectory })
+});
+
+router.get('/landingPageAdmin/table', validateToken, function (req, res) {
+  res.sendFile('/landingPageAdmin/table.html', { root: publicDirectory })
+});
+
+router.get('/landingPageAdmin/manageKromos', validateToken, function (req, res) {
+  res.sendFile('/landingPageAdmin/manageKromos.html', { root: publicDirectory })
 });
 
 module.exports = router;

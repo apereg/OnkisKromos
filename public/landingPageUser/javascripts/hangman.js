@@ -16,7 +16,7 @@ function start() {
 function reset() {
     remainingAttempts = 6;
     letters = [];
-    document.getElementById("imagen").src = `images/Ahorcado-${MAX_ATTEMPTS - this.remainingAttempts}.png`
+    document.getElementById("imagen").inner = "/landingPageUser/assets/img/Ahorcado-${MAX_ATTEMPTS - this.remainingAttempts}.png";
     document.getElementById("intentos").innerHTML = "Número de intentos restantes: "+remainingAttempts;
     resetInputs();
 }
@@ -35,7 +35,7 @@ function resetLetter() {
 }
 
 function selectImage() {
-    document.getElementById("imagen").src = `images/Ahorcado-${MAX_ATTEMPTS - this.remainingAttempts}.png`;
+    document.getElementById("imagen").src = `/landingPageUser/assets/img/Ahorcado-${MAX_ATTEMPTS - this.remainingAttempts}.png`;
 }
 
 function endGame() {
@@ -46,30 +46,51 @@ function endGame() {
 }
 
 function newGame() {
-    reset();
-    var play = false;
-    if(active){
-        if(confirm("¿Desea sobreescribir la partida comenzaba?")){
-            play = true;
-        }
+    
+    console.log("iniciando partida");
+    
+    var play;
+    if(active){        
+        swal({
+            title: 'CUIDADO!',
+            text: "Quieres sobreescribir la partida actual?",
+            icon: 'warning',
+            showCancelButton: true,
+            buttons: ["Cancel", "Ok!"]
+            })
+            .then((willDelete) => {
+                if(willDelete){
+                    swal({title: 'Listo', text: 'Se iniciara una nueva partida!', icon: 'success'});
+                    reset();
+                    word = selectWord();
+                    console.log(word);
+                    play = false;
+                }else{
+                    play = true;
+                }
+            });
+                     
+
     }else{
         active = true;
         play = true;
     }
     console.log("empezamos");
     if(play) {
+        reset();
         active = true;
         console.log(resp);
         word = selectWord();
+        console.log(word);
     }
-    console.log(word);
+    
 }
 
 function calculatePoints() {
     return remainingAttempts*100;
 }
 
-function newLetter() {
+async function newLetter() {
     if(active) {
         var letter = document.getElementById("letter").value.toLowerCase();
         console.log("letter: ",letter);
@@ -88,9 +109,13 @@ function newLetter() {
                     }
                     if (word === wordTry) {
                         active = false;
-                        swal("¡Good joob!", "Has completado el ahorcado!", "success", {
+
+                        var points = calculatePoints();
+
+                        swal("¡Good joob!", "Has ganado "+points+" monedas en el ahorcado!", "success", {
                             button: "¡Aceptar!",
-                        });
+                        });                        
+                        await givePoints(points);
                     }
                 } else {
                     remainingAttempts--;
@@ -178,4 +203,11 @@ function limitDictionary(dic) {
         }
     }
     return resp;
+}
+
+async function givePoints(points){
+    return $.post(
+        "/addPoints",
+        {points: points}
+    );
 }
