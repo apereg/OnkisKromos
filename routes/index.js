@@ -10,7 +10,7 @@ var path = require('path');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../tokenConfig')
-
+const multer = require('multer');
 
 const { body } = require('express-validator');
 const helpers = require('../lib/helpers');
@@ -20,7 +20,7 @@ const publicDirectory = path.join(__dirname, '../public');
 const rootDirectory = path.join(__dirname, '../')
 const fetch = require('node-fetch');
 const fs = require("fs");
-const multer = require('multer');
+
 
 app.set('TOKEN_SECRET', config.TOKEN_SECRET);
 
@@ -61,6 +61,11 @@ function generateToken(req, res, next) {
   res.cookie('token', token, { httpOnly: true });
   next()
 }
+
+/*
+router.get('*', function(req, res) {  
+  res.redirect('https://' + req.headers.host + req.url);
+}) */
 
 /* GET home page. */
 router.get('/', validateToken, function (req, res, next) {
@@ -193,7 +198,6 @@ router.post('/cardsIdAlbums', validateToken, async function (req, res) {
   } catch (error) {
     return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
   }
-
   res.end(JSON.stringify(output));
 
 });
@@ -206,12 +210,55 @@ router.post('/collections', validateToken, async function (req, res) {
   try {
     queryResult = await pool.query('SELECT * FROM collections;');
   } catch (error) {
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Collections not found.'));
   }
-  console.log("Colecciones buscada");
   res.end(JSON.stringify(queryResult));
 
 });
+
+/* POST get info from database cards*/
+router.post('/cards', validateToken, async function (req, res) {
+  console.log('Buscando informacion de los kromos en la base de datos...');
+
+  var queryResult;
+  try {
+    queryResult = await pool.query('SELECT * FROM cards;');
+  } catch (error) {
+    return done(null, false, req.flash('message', 'Cards not found.'));
+  }
+  res.end(JSON.stringify(queryResult));
+
+});
+
+/* POST get info from database name collections */
+router.post('/nameCollection', validateToken, async function (req, res) {
+  console.log('Buscando informacion de los nombres de las colecciones en la base de datos...');
+
+  var queryResult;
+  try {
+    queryResult = await pool.query('SELECT * FROM cards;');
+  } catch (error) {
+    return done(null, false, req.flash('message', 'Collection not found.'));
+  }
+  res.end(JSON.stringify(queryResult));
+
+});
+
+/* POST get info from database name collections */
+router.post('/nameCollectionId', validateToken, async function (req, res) {
+  console.log('Buscando informacion de los nombres de las colecciones en la base de datos...');
+  var id = req.body.id;
+  var queryResult;
+
+  try {
+    queryResult = await pool.query('SELECT name FROM collections where idcollections = ?;', id);
+  } catch (error) {
+    return done(null, false, req.flash('message', 'Collection not found.'));
+  }
+  res.end(JSON.stringify(queryResult[0].name));
+
+});
+
 
 router.post('/collectionsId', validateToken, async function (req, res) {
   console.log('Buscando informacion de las colecciones en la base de datos...');
@@ -245,6 +292,27 @@ router.post('/cardsCollections', validateToken, async function (req, res) {
       output.push({ "id": ids[i], "result": number });
     }
   } catch (error) {
+    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+  }
+
+  res.end(JSON.stringify(output));
+
+});
+
+/* POST get info from database collections cards*/
+router.post('/cardsAlbum', validateToken, async function (req, res) {
+  console.log('Buscando informacion de los kromos en la base de datos...');
+  var id = req.body.id;
+
+  var queryResult, card, output = [];
+  try {
+    queryResult = await pool.query('SELECT idcards FROM albumcards where idalbum = ?;', id);
+    for (let i = 0; i < queryResult.length; i++) {
+      card =  await pool.query('SELECT * FROM cards where idcards = ?;', queryResult[i].idcards);
+      output.push(card);
+    }
+  } catch (error) {
+    console.log(error);
     return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
   }
 
@@ -334,55 +402,26 @@ router.post('/collectionAdd', validateToken, async (req, res) => {
 });
 
 const storage = multer.diskStorage({
-  destination: path.join(__dirname, '../public/uploads'),
-  filename:  (req, file, cb) => {
-      cb(null, file.originalname);
-  }
-})
-
-const uploadImage = multer({
-  storage,
-  limits: {fileSize: 1000000}
-}).single('image');
-
-app.use(multer({storage}).single('image'));
-
-router.post('/upload', async(req, res) => {
-  uploadImage(req, res, (err) => {
-      if (err) {
-          err.message = 'The file is so heavy for my service';
-          return res.send(err);
-      }
-      console.log(req.body);
-      console.log(uploadImage)
-      console.log(storage)
-      res
-        .status(200)
-        .contentType("text/plain")
-        .end("File uploaded!");
-  });
-});
-
-
-
-/*
-const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     console.log("estoy");
-    cb(null, '/carpeta')
+    cb(null, 'public/resources/kromos')
   },
   filename: (req, file, cb) =>{
+    console.log("estoy filename");
     console.log(file);
-    cb(null, Date.now() + path.extname(file.originalname))
+    cb(null, file.originalname + path.extname(file.originalname))
   }
 });
 
-const upload = multer({storage: storage})
+const subida = multer({
+  storage: storage,
+  limits: {fileSize: 1000000},
+}).array('image', 10);
 
-router.post("/upload", upload.single("image"), (req, res) =>{
-  console.log(upload)
-  //ni puta idea, no llega nunca a imprimirse el estoy de arriba
-});*/
+router.post("/upload", validateToken, subida, (req, res, next) =>{
+  console.log("Image uploaded");
+  res.end();
+});
 
 router.get('/landingPageUser', validateToken, function (req, res) {
   res.sendFile('/landingPageUser/index.html', { root: publicDirectory })

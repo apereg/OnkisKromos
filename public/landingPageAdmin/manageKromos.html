@@ -194,27 +194,27 @@
                                                         <tbody>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
-                                                                <td><a href="https://www.youtube.com/watch?v=bnkJf5N5vZ8">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
-                                                                <td><a href="#">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
-                                                                <td><a href="#">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
-                                                                <td><a href="#">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
-                                                                <td><a href="#">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
-                                                                <td><a href="#">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
                                                             </tr>
                                                         </tbody>
                                                         <tfoot>
@@ -266,18 +266,18 @@
                     <div class="mb-3"></div>
                     <div class="mb-3"></div>
                     <div class="row">
-                        <form method="POST" action="/upload">
+                        <form method="POST" action="/upload" enctype="multipart/form-data">
                             <div class="col"><label class="form-label"></label><label class="form-label" for="username" id="imgKromo"><strong>Imagen</strong></label></div>
-                            <div class="col"><input type="file" id="fileImg" name="image" accept=".jpg,.png" data-show-upload="true" data-show-caption="true" required></div>
-                            <input type="submit">
+                            <div class="col"><input type="file" id="fileImg" name="image" accept=".jpg,.png" data-show-upload="true" data-show-caption="true"></div>
+                            <span><br></span>
+                            <button class="btn btn-primary" type="submit" onclick="addKromo()" style="margin-left:350px;">Guardar</button>
                         </form>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Cerrar</button><button class="btn btn-primary" type="button" onclick="addKromo()">Guardar</button></div>
             </div>
         </div>
     </div>
-    <div class="modal fade" role="dialog" tabindex="-1" id="kromo">
+    <div class="modal fade" role="dialog" tabindex="-1" id="collection">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -291,12 +291,12 @@
                     <div class="mb-3"></div>
                     <div class="row">
                         <div class="col"><label class="col-form-label" for="username" id="precioKromoEdit"><strong>Precio&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</strong></label></div>
-                        <div class="col"><input type="text" id="name-2" name="username"></div>
+                        <div class="col"><input type="number" id="name-2" name="username" min="150" max="350"></div>
                     </div>
                     <div class="mb-3"></div>
                     <div class="row">
-                        <div class="col"><label class="col-form-label" for="username" id="estadoKromoEdit"><strong>Estado</strong><br></label></div>
-                        <div class="col"><input type="text" id="name-3" name="username"></div>
+                        <div class="mb-3"><label class="form-label" for="first_name"><strong>Activa</strong><br></label><input type="radio" id="activatedYesEdit" name="activated" style="margin-left: 10px;">
+                            <label class="form-label" for="first_name" style="margin-left: 25px;"><strong>No Activa</strong><br></label><input type="radio" id="activatedNoEdit" name="activated" style="margin-left: 7px;"></div>
                     </div>
                 </div>
                 <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Cerrar</button><button class="btn btn-primary" type="button" onclick="editCollection()">Guardar</button></div>

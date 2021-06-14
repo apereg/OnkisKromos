@@ -8,6 +8,11 @@ var app = require('../app');
 var debug = require('debug')('onkiskromos:server');
 var http = require('http');
 
+var express = require('express');
+var fs = require('fs');
+var https = require('https');
+var path = require('path');
+
 /**
  * Get port from environment and store in Express.
  */
@@ -18,8 +23,29 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
+
+
+var options = {
+  key: fs.readFileSync(path.resolve('certs/server.key')),
+   cert: fs.readFileSync(path.resolve('certs/server.crt'))
+}
+
+https.createServer(options, app).listen(443, function(){
+	console.log('Servidor https corriendo en el puerto 443');
+}); 
+
+/*
+function requireHTTPS(req, res, next) {
+  // The 'x-forwarded-proto' check is for Heroku
+  if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== "development") {
+    return res.redirect('https://' + req.get('Host') + req.url);
+  }
+  next();
+}
+app.use(requireHTTPS);
+*/
+
 
 /**
  * Listen on provided port, on all network interfaces.

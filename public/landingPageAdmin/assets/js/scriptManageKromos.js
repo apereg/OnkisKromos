@@ -37,8 +37,7 @@ async function saveDataDB(valoresStringCol) {
     );
 }
 
-async function saveImgDB(path) {
-    console.log(path);
+async function saveImgDB() {
     return $.post(
         "/upload"
     );
@@ -82,9 +81,8 @@ async function addKromo(){
                     valoresString = valoresString.concat(cantMaxKromo+"-");
                     var path = fileImg.split("\\");
                     valoresString = valoresString.concat(path[2]);
-                   
+                    console.log(path[2]);
                     addKromoFront(nameKromo);
-                    await saveImgDB(fileImg);
                     valoresKromo.push(valoresString);
                     auxTimesAdd++;
                 }else{
@@ -94,7 +92,7 @@ async function addKromo(){
                 swal('Oops...', 'La cantidad maxima de cromos ha de ser entre 5 y 10', 'error'); 
             }
         }else{
-            swal('Oops...', 'El precio de los cromos ha de ser entre 5 y 10', 'error'); 
+            swal('Oops...', 'El precio de los cromos ha de ser entre 25 y 150', 'error'); 
         }
     }else{
         swal('Oops...', 'Debe establecer una nombre para el cromo', 'error');  
@@ -120,8 +118,10 @@ async function addCollection(){
                     }else{
                         valoresStringCol = valoresStringCol.concat("0");
                     }
+                    swal('¡Perfecto!', 'Colección añadida', 'success');
+                    //await saveImgDB();
+                    console.log("paso a guardar colecion")
                     await saveDataDB(valoresStringCol);
-                    swal('¡Perfecto!', 'Colección añadida', 'success'); 
                 }else{
                     swal('Oops...', 'Debe seleccionar una de las opciones Activa o No Activa', 'error'); 
                 }

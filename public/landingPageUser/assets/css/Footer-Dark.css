@@ -92,21 +92,23 @@
   margin-left: 100px;
 }
 
-.expositor {
-  width: 450px;
-  height: 300px;
-  background-image: url(https://www.hemomadrid.com/wp-content/uploads/2015/09/imagen-vacia.jpg);
-  border-radius: 15px;
-  border: solid;
-  border-color: #4e73df;
-}
-
-#expositor-kromo {
-  width: 420px;
+#expositor {
+  width: 380px;
   height: 212px;
   background-image: url(https://www.hemomadrid.com/wp-content/uploads/2015/09/imagen-vacia.jpg);
   border-radius: 15px;
   border: solid;
   border-color: #4e73df;
+  margin-left: 50px;
+}
+
+#expositor-kromo {
+  width: 380px;
+  height: 212px;
+  background-image: url(https://www.hemomadrid.com/wp-content/uploads/2015/09/imagen-vacia.jpg);
+  border-radius: 15px;
+  border: solid;
+  border-color: #4e73df;
+  margin-left: 20px;
 }
 
