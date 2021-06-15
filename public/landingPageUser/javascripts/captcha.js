@@ -1,6 +1,12 @@
 async function start() {
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'captcha'
+    }
+    
     writeData(auxLoad);
 }
 
@@ -16,12 +22,11 @@ function writeData(data) {
 }
 
 async function captcha() {
-    console.log('capcha')
+    
     //Captcha response
     var formData = new FormData(document.getElementById('submit_form'));
     var captcha = formData.get('g-recaptcha-response');
-
-    console.log(captcha);
+    
     var solucion = false;
     //Opcion con jquery
 
@@ -58,7 +63,6 @@ async function verifyCaptcha(captcha) {
 
 
 async function givePoints(points) {
-    console.log('A dar ' + points + ' points')
     await ($.post('/addPoints', { points: points }, function (data, status) {
         if (status !== 'success') swal("¡Oh no!", "Ha ocurrido un error al otorgar los puntos, ¡Intentalo de nuevo!", "error", { button: "¡Aceptar!", });
     }));

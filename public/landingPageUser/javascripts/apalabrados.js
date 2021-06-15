@@ -3,7 +3,13 @@ let ANSWERS = []
 async function start(){
     newQuestions()
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'apalabrados'
+    }
+    
     writeData(auxLoad);
 }
 

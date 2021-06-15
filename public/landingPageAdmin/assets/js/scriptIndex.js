@@ -1,6 +1,10 @@
 async function start(){
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'index'
+    }
     writeData(auxLoad);
 
     var auxLoadAlbum = await loadDataAlbum();

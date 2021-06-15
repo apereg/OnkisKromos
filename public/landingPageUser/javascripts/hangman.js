@@ -80,7 +80,6 @@ function newGame() {
                     swal({title: 'Listo', text: 'Se iniciara una nueva partida!', icon: 'success'});
                     reset();
                     word = selectWord();
-                    console.log(word);
                     play = false;
                 }else{
                     play = true;

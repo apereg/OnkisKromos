@@ -4,7 +4,12 @@ var collections = [];
 
 async function start() {
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'buysell'
+    }
+    
     writeData(auxLoad);
 
     kromos = await loadCards();
@@ -87,7 +92,7 @@ function rowState(rowNum) {
     const table = document.getElementById("albums_table");
     
     var cell = document.getElementById("status_"+rowNum);
-    if(collections[rowNum - 1].status == 0){
+    if(collections[rowNum - 1].activated == 0) {
         cell.innerHTML = "No activa";   
     }else{
         cell.innerHTML = "Activa";
@@ -96,12 +101,33 @@ function rowState(rowNum) {
 
 function rowPrice(rowNum) {
     var cell = document.getElementById("price_"+rowNum);
-    cell.innerHTML= collections[rowNum - 1].price;   
+    cell.innerHTML = collections[rowNum - 1].price;   
 }
 
 function rowName(rowNum){
     var cell = document.getElementById("name_"+rowNum);
-    cell.innerHTML += collections[rowNum - 1].name;   
+    
+    if(rowNum > 6 && rowNum < 9){
+        
+        var img = document.createElement('img');
+        img.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/newcollection.jpg";
+
+        img.width = '30';
+        img.height = '30';
+        img.className = 'rounded-circle me-2';
+
+        var espacio = '&nbsp;';  
+        
+        cell.innerHTML = '';
+        
+        cell.appendChild(img);
+        cell.innerHTML += espacio + collections[rowNum - 1].name;  
+
+
+
+    }else{
+        cell.innerHTML += collections[rowNum - 1].name;
+    }
 }
 
 function newRow() {
@@ -125,7 +151,7 @@ function newRow() {
         //Relleno de nameCell
         var nameImage = document.createElement("img");
 
-        nameImage.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/avatars/profile-pic.jpg";
+        nameImage.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/newcollection.jpg";
 
         //Parametros de la imagen
         nameImage.width = '30';
@@ -164,7 +190,8 @@ function newRow() {
 }
 
 /* COMPRA DE KROMOS */
-async function byCard() {
+
+async function buyCard() {
     var user = await loadData();
     user = JSON.parse(user);
     var name = document.getElementById("name").value;
@@ -182,8 +209,7 @@ async function byCard() {
 
         var albums = await loadAlbums(user.idusers);
         albums = JSON.parse(albums);
-        albums = formatAlbums(albums);
-        console.log(albums);
+        albums = formatAlbums(albums);       
         
         var idsCol = [];
         for(let i=0; i<albums.length; i++) {
@@ -199,25 +225,53 @@ async function byCard() {
 
         var idAlbum = obtainAlbum(albums, nameCollections, nameCol)
         if(idAlbum!=null){
-            makeOperation(idCard, price, idAlbum, user.idusers);
+            var state = await loadState(idAlbum);
+            state = JSON.parse(state);
+            if(state.activated==1){
+                if(await makeOperation(idCard, price, idAlbum, user.idusers)){
+                    await actualizarEstadoAlbum(idAlbum);
+                    swal("¡Perfecto!", "Cromo comprado","success")
+                    .then(function(isConfirm) {
+                    if (isConfirm) {
+                        location.reload();
+                    } else {
+                        //if no clicked => do something else
+                    }
+                    });
+                }
+            }else{
+                swal('Oops...', 'No se puede comprar un kromo si su coleccion no esta activa', 'error');
+            }
         }else{
             swal('Oops...', 'Usted no posee el album necesario para dicho kromo', 'error');
         }
     }
 }
 
+
 async function makeOperation(idCard, points, idAlbum, idUser) {
-    operationCards(idCard);
-    operationUsers(points, idUser);
-    console.log("PROBANDO, ", idCard,"-", idAlbum);
-    asociatedAlbumCard(idCard, idAlbum);
-    alert("finalizada");
+    var resultado = await asociatedAlbumCard(idCard, idAlbum);
+    if(resultado == "Ok") {
+        operationCards(idCard);
+        await operationUsers(points, idUser); 
+        return true; 
+    }else{
+        swal('Oops...', '¡Usted no puede tener kromos repetidos!\n¡Comparta con los demas!', 'error');
+        return false;
+    }
 }
 
-function obtainAlbum(idsAlbums, nameCollections, name) {
-    console.log("idsAlbums: ", idsAlbums);
-    console.log("nameCollections: ", nameCollections);
-    console.log("name: ", name);
+async function actualizarEstadoAlbum(idAlbum) {
+    var units = await loadUnits(idAlbum);
+    if(units==0) {
+        await updateAlbum(idAlbum, "Completada parcialmente");
+    }else if(units==10){
+        await updateAlbum(idAlbum, "Finaliza");
+    }else{
+        console.log("El album no cambia de estado");
+    }
+}
+function obtainAlbum(idsAlbums, nameCollections, name) {    
     for(let i=0; i<nameCollections.length; i++) {
         if(nameCollections[i]==name) {
             return idsAlbums[i];
@@ -231,6 +285,29 @@ function formatAlbums(albums) {
         output.push(albums[i].idalbums);
     }
     return output;
+}
+
+async function updateAlbum(id, state) {
+    return $.post(
+        "/updateStateAlbum",
+        {idAlbum: id,
+        stateAlbum: state}
+    );
+}
+
+
+async function loadUnits(id) {
+    return $.post(
+        "/cardsByUser",
+        {id: id}
+    );
+}
+
+async function loadState(id) {
+    return $.post(
+        "/activatedCollectionId",
+        {id: id}
+    );
 }
 
 async function loadIdCard(name) {
@@ -282,18 +359,27 @@ async function asociatedAlbumCard(idCards, idAlbum) {
 
 /* COMPRA DE ALBUMS */
 
-async function buyAlbum(id) {
-    console.log("HOLAAAAAAAAA");
+async function buyAlbum(id) {    
     var user = await loadData();
-    user = JSON.parse(user);
-    console.log(user)
-    var price = document.getElementById("price_"+id).innerHTML;
-    console.log(price);
+    user = JSON.parse(user);    
+    var price = document.getElementById("price_"+id).innerHTML;    
     if(user.points<price) {
         swal('Oops...', 'Usted no posee los suficientes puntos para comprar el kromo', 'error');
-    }else{
-        console.log("HOLAAAAAAAAA");
-        await buyAlbumBD(id, user.idusers);
+    }else{      
+        var state = await loadStateCol(id);
+        if(state==1){
+            await buyAlbumBD(id, user.idusers);
+           swal("¡Perfecto!", "Colección comprada","success")
+                .then(function(isConfirm) {
+                if (isConfirm) {
+                    location.reload();
+                } else {
+                    //if no clicked => do something else
+                }
+                });
+        }else{
+            swal('Oops...', 'No se puede comprar un album si su coleccion no esta activa', 'error');
+        }  
     }
 }
 
@@ -302,6 +388,13 @@ async function buyAlbumBD(idCol, idUs) {
         "/insertAlbums",
         {idCollection: idCol,
         idUser: idUs}
+    );
+}
+
+async function loadStateCol(idCol) {
+    return $.post(
+        "/stateCollectionId",
+        {id: idCol}
     );
 }
 

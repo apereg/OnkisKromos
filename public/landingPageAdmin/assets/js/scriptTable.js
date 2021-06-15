@@ -2,7 +2,11 @@ var collections = [];
 
 async function start(){
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'table'
+    }
     writeData(auxLoad);
 
     var aux = await loadCollections();
@@ -89,108 +93,6 @@ function writeRowDate(index) {
     document.getElementById(pos+"_date").innerHTML = datetimeToDate(collections[index].date);
 }
 
-/*
-function writeCollections(cards) {
-    for(let i=0; i<collections.length; i++) {
-        switch(collections[i].idcollections) {
-            case 1:
-                //formula 1
-                if(collections[i].activated == 1){
-                    document.getElementById("f1_active").innerHTML = "Activa";
-                }else{
-                    document.getElementById("f1_active").innerHTML = "No activa";
-                }
-                document.getElementById("f1_price").innerHTML = collections[i].price;
-                if(cards[i].result!="null"){
-                    document.getElementById("f1_total").innerHTML = cards[i].result;
-                }else{
-                    document.getElementById("f1_total").innerHTML = "0";
-                }
-                document.getElementById("f1_date").innerHTML = datetimeToDate(collections[i].date);
-                break;
-            case 2:
-                //csgo
-                if(collections[i].activated == 1){
-                    document.getElementById("cs_active").innerHTML = "Activa";
-                }else{
-                    document.getElementById("cs_active").innerHTML = "No activa";
-                }
-                document.getElementById("cs_price").innerHTML = collections[i].price;
-                if(cards[i].result!="null"){
-                    document.getElementById("cs_total").innerHTML = cards[i].result;
-                }else{
-                    document.getElementById("cs_total").innerHTML = "0";
-                }
-                document.getElementById("cs_date").innerHTML = datetimeToDate(collections[i].date);
-                break;
-            case 3:
-                //super league
-                if(collections[i].activated == 1){
-                    document.getElementById("super_active").innerHTML = "Activa";
-                }else{
-                    document.getElementById("super_active").innerHTML = "No activa";
-                }
-                document.getElementById("super_price").innerHTML = collections[i].price;
-                if(cards[i].result!="null"){
-                    document.getElementById("super_total").innerHTML = cards[i].result;
-                }else{
-                    document.getElementById("super_total").innerHTML = "0";
-                }
-                document.getElementById("super_date").innerHTML = datetimeToDate(collections[i].date);
-                break;
-            case 4:
-                //nba
-                if(collections[i].activated == 1){
-                    document.getElementById("nba_active").innerHTML = "Activa";
-                }else{
-                    document.getElementById("nba_active").innerHTML = "No activa";
-                }
-                document.getElementById("nba_price").innerHTML = collections[i].price;
-                if(cards[i].result!="null"){
-                    document.getElementById("nba_total").innerHTML = cards[i].result;
-                }else{
-                    document.getElementById("nba_total").innerHTML = "0";
-                }
-                document.getElementById("nba_date").innerHTML = datetimeToDate(collections[i].date);
-                break;
-            case 5:
-                //rocket league
-                if(collections[i].activated == 1){
-                    document.getElementById("rocket_active").innerHTML = "Activa";
-                }else{
-                    document.getElementById("rocket_active").innerHTML = "No activa";
-                }
-                document.getElementById("rocket_price").innerHTML = collections[i].price;
-                if(cards[i].result!="null"){
-                    document.getElementById("rocket_total").innerHTML = cards[i].result;
-                }else{
-                    document.getElementById("rocket_total").innerHTML = "0";
-                }
-                document.getElementById("rocket_date").innerHTML = datetimeToDate(collections[i].date);
-                break;
-            case 6:
-                //valorant
-                if(collections[i].activated == 1){
-                    
-                    document.getElementById("valorant_active").innerHTML = "Activa";
-                }else{
-                    document.getElementById("valorant_active").innerHTML = "No activa";
-                }
-                document.getElementById("valorant_price").innerHTML = collections[i].price;
-                if(cards[i].result!="null"){
-                    console.log("venimos")
-                    document.getElementById("valorant_total").innerHTML = cards[i].result;
-                }else{
-                    document.getElementById("valorant_total").innerHTML = "0";
-                }
-                document.getElementById("valorant_date").innerHTML = datetimeToDate(collections[i].date);
-                break;
-            default:
-                console.log("Se lio brutal");
-        }
-    }
-}
-*/
 function datetimeToDate(mySQLDate){
     var date = mySQLDate.split("T");
     var aux = date[0].split("-");
@@ -225,7 +127,7 @@ function addRow(nameSrc, name, nameCollection, active, points, quantity, date){
     var nameImage = document.createElement("img");
 
         //Source de la imagen
-        nameImage.src = nameSrc;
+        nameImage.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/newcollection.jpg";
 
         //Parametros de la imagen
         nameImage.width = '30';

@@ -176,6 +176,75 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="card shadow mb-3">
+                                <div class="card-header py-3">
+                                    <p class="text-primary m-0 fw-bold">Generar Copias Kromos</p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col"><label class="col-form-label">Nombre del Kromo</label></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><input type="text" class="form-control" id="name_kromo" readonly></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <div class="col"><label class="col-form-label">Precio</label></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><input type="text" class="form-control" id="price_kromo" readonly></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><label class="col-form-label">Unidades restantes</label></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><input type="text" class="form-control" id="units_kromo" readonly></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><label class="col-form-label">Nombre de la Colección</label></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><input type="text" class="form-control" id="nameCol" readonly></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><span>&nbsp;</span></div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col"><button class="btn btn-primary" type="button" style="margin-left: 85px;width: 95px;height: 90px;" onclick="newcopy()">Generar Copia</button></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col" style="margin-top: 70px;">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div id="expositor"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col"><span>&nbsp;</span></div>
+                                                    </div>
+                                                    <nav style="margin-left: 200px;">
+                                                        <ul class="pagination" style="margin-left: 10px;">
+                                                            <li class="page-item"><a class="page-link" aria-label="Previous" onclick="stepBack()" style="cursor: pointer; "><span aria-hidden="true">«</span></a></li>
+                                                            <li class="page-item"><a class="page-link" aria-label="Next" onclick="stepForward()" style="cursor: pointer; "><span aria-hidden="true">»</span></a></li>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="col">
                             <div class="card shadow mb-3">
@@ -236,7 +305,7 @@
                         </div>
                     </div>
                 </div>
-                <div></div>
+                
             </div>
             <footer class="bg-white sticky-footer">
                 <div class="container my-auto">

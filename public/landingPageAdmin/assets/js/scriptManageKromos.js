@@ -7,19 +7,31 @@ var imgs = [];
 var idCollectionEdit;
 var nameColK;
 var collections = [];
+var kromos = [];
+var index = 0;
+
 
 /* Inicialization */
 async function start(){
     var auxLoad = await loadNameUsr();
-    auxLoad = JSON.parse(auxLoad);
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'index'
+    }
     writeData(auxLoad);
     auxTimesAdd = 0;
     auxTimes = 0; 
     
     var aux = await loadCollections();
-    collections = JSON.parse(aux);
-    console.log(collections);
+    collections = JSON.parse(aux);    
     writeCollections();
+
+    console.log(collections.length+1);
+
+    kromos = await loadCards();
+    kromos = JSON.parse(kromos);
+    writeCard();
 }
 
 /* POST methods */
@@ -37,17 +49,57 @@ async function loadNameUsr() {
     );
 }
 
+async function loadCards() {
+    return $.post(
+        "/cards",
+    );
+}
+
+async function writeCard() {
+    document.getElementById("name_kromo").value = kromos[index].name;
+    document.getElementById("price_kromo").value = kromos[index].price;
+    document.getElementById("units_kromo").value = kromos[index].remainingUnits;
+    var nameCol = await idToNameCollection(kromos[index].idcollections);
+    namecol = JSON.parse(nameCol);
+    document.getElementById("nameCol").value = nameCol.replaceAll("\"", "");
+    var path = `url(../resources/kromos/${kromos[index].imagePath}.png)`;
+    document.getElementById("expositor").style.backgroundImage = path;
+}
+
+async function idToNameCollection(id) {
+    console.log("Accediendo a db para sacar el nombre de la colección");
+    return $.post(
+        "/nameCollectionId",
+        {id: id}
+    );
+}
+
+function stepBack() {
+    if(index>0) {
+        index --;
+        writeCard();
+    }
+}
+
+function stepForward() {
+    if(index<kromos.length-1){
+        index ++;
+        writeCard();
+    }
+}
+
 async function loadCollections() {
     return $.post(
         "/collections",
     );
 }
 
-async function saveDataDB(valoresStringCol) {
+async function saveDataDB(valoresStringCol, num) {
     return $.post(
         "/collectionAdd",
         {kromos: valoresKromo.toString(),
-            collection: valoresStringCol}
+            collection: valoresStringCol,
+            numCol: num }
     );
 }
 
@@ -158,8 +210,25 @@ async function addCollection(){
                     }else{
                         valoresStringCol = valoresStringCol.concat("0");
                     }
-                    swal('¡Perfecto!', 'Colección añadida', 'success');
-                    await saveDataDB(valoresStringCol);
+                    /*
+                    console.log("LLAMANDO AL NUM");
+                    var id = await loadNum();
+                    console.log("adjnasd", id);
+                    var num = obtainId(id)
+                    console.log(num);
+                    var pos = parseInt(num);
+                    console.log(pos+1);
+                    await saveDataDB(valoresStringCol, pos+1);
+                    */
+                    await saveDataDB(valoresStringCol, 1);
+                    swal('¡Perfecto!', 'Colección añadida', 'success')
+                    .then(function(isConfirm) {
+                        if (isConfirm) {
+                            //location.reload();
+                        } else {
+                            //if no clicked => do something else
+                        }
+                    });
                 }else{
                     swal('Oops...', 'Debe seleccionar una de las opciones Activa o No Activa', 'error'); 
                 }
@@ -172,7 +241,26 @@ async function addCollection(){
     }else{
         swal('Oops...', 'Debe crear 10 cromos', 'error');
     }
-    location.reload();
+    //location.reload();
+}
+
+function obtainId(path) {
+    console.log(path);
+    try {
+        var ruta = path.split("_");
+        console.log(ruta[1]);
+        var auxiliar = ruta[1].replace("N","");
+        console.log(auxiliar);
+        var aux = auxiliar.split("n");
+        console.log(aux[1]);
+        if(aux[1]!=undefined){
+            return aux[1];
+        }else{
+            return 0;
+        }
+    } catch(e) {
+        return 0;
+    }
 }
 
 function valueDefault(id) {
@@ -235,7 +323,7 @@ function addRow(id){
         let nameImage = document.createElement("img");
         
         //Source de la imagen
-        nameImage.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/avatars/profile-pic.jpg";
+        nameImage.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/newcollection.jpg";
         nameImage.width = '30';
         nameImage.height = '30';
         nameImage.className = 'rounded-circle me-2';
@@ -261,4 +349,29 @@ function addRow(id){
         row.appendChild(editCell);
 
         table.appendChild(row);
+}
+
+async function newcopy() {
+    await updateKromo();
+    swal("¡Perfecto!", "Nueva copia creada","success")
+                .then(function(isConfirm) {
+                if (isConfirm) {
+                    location.reload();
+                } else {
+                    //if no clicked => do something else
+                }
+                });
+}
+
+async function updateKromo() {
+    return $.post(
+        "/updateRemainingUnits",
+        {idCards: index+1}
+    );
+}
+
+async function loadNum() {
+    return $.post(
+        "/obtainIdNewKromo",
+    );
 }

@@ -21,7 +21,7 @@ const rootDirectory = path.join(__dirname, '../')
 const fetch = require('node-fetch');
 const fs = require("fs");
 
-var newCollectionID = 1;
+var newCollectionID = undefined;
 var auxiliarDeVuelo = 1;
 var auxiliarDeEnfermería = 1;
 
@@ -64,11 +64,25 @@ function generateToken(req, res, next) {
   next()
 }
 
-/*
-router.get('*', function(req, res) {  
-  res.redirect('https://' + req.headers.host + req.url);
-})*/
+async function updateNewCollectionID(req, res, next) {
+  console.log('La id de la nueva coleccion antes del trap es: ' +newCollectionID)
 
+  if(newCollectionID === undefined) {
+    try {
+      console.log('POR ENDE SOY MARICO')
+      var query = "SELECT idcollections from collections";
+      queryUpdateState = await pool.query(query);
+      console.log(queryUpdateState.length);
+      newCollectionID = queryUpdateState.length + 1;
+      console.log('La id de la nueva coleccion despues del trap es: ' +newCollectionID)
+    } catch (error) {
+      console.log(error);
+      return done(null, false, req.flash('message', 'Error while trying to edit remaining units cards to DB'));
+    }
+  }
+
+  next();
+}
 
 /* GET home page. */
 router.get('/', validateToken, function (req, res, next) {
@@ -262,7 +276,7 @@ router.post('/nameCollection', validateToken, async function (req, res) {
 
 /* POST get info from database name collections */
 router.post('/nameCollectionId', validateToken, async function (req, res) {
-  console.log('Buscando informacion de los nombres de las colecciones en la base de datos...');
+  console.log('Buscando informacion del nombre de las colecciones en la base de datos...');
   var id = req.body.id;
   var queryResult;
 
@@ -272,6 +286,55 @@ router.post('/nameCollectionId', validateToken, async function (req, res) {
     return done(null, false, req.flash('message', 'Collection not found.'));
   }
   res.end(JSON.stringify(queryResult[0].name));
+
+});
+
+/* POST get info from database name collections */
+router.post('/activatedCollectionId', validateToken, async function (req, res) {
+  console.log('Buscando informacion del estado de las colecciones en la base de datos...');
+  var id = req.body.id;
+  var queryResult;
+
+  try {
+    queryResult = await pool.query('SELECT activated FROM collections INNER JOIN albums ON collections.idcollections = albums.idcollection where albums.idalbums = ?;', id);
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Collection not found.'));
+  }
+  res.end(JSON.stringify(queryResult[0]));
+});
+
+/* POST get info from database name collections */
+router.post('/cardsByUser', validateToken, async function (req, res) {
+  console.log('Buscando informacion del numero de cartas del usuario en la base de datos...');
+  var id = req.body.id;
+  var user = req.user.idusers; 
+  var query = "SELECT idcards FROM albumcards INNER JOIN albums ON albumcards.idalbum = albums.idalbums where albums.idcollection = "+id+" AND albums.iduser = "+user+";";
+  var queryResult;
+
+  try {
+    console.log("EL ID ES ESTE: ", id);
+    queryResult = await pool.query(query);
+    console.log("ME CAGO EN TU:", queryResult);
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Collection not found.'));
+  }
+  res.end(JSON.stringify(queryResult.length));
+});
+
+/* POST get info from database name collections */
+router.post('/stateCollectionId', validateToken, async function (req, res) {
+  console.log('Buscando informacion de los nombres de las colecciones en la base de datos...');
+  var id = req.body.id;
+  var queryResult;
+
+  try {
+    queryResult = await pool.query('SELECT activated FROM collections where idcollections = ?;', id);
+  } catch (error) {
+    return done(null, false, req.flash('message', 'Collection not found.'));
+  }
+  res.end(JSON.stringify(queryResult[0].activated));
 
 });
 
@@ -427,6 +490,7 @@ router.post('/subtractPoints', validateToken, async (req, res) => {
     console.log(error);
     return done(null, false, req.flash('message', 'Error substracting points.'));
   }
+  res.end();
 });
 
 /* POST get info of collections from database albums*/
@@ -487,33 +551,74 @@ router.post('/insertAlbums', validateToken, async function (req, res) {
 
 });
 
+/* POST insert info in database albums*/
+router.post('/obtainIdNewKromo', validateToken, async function (req, res) {
+  console.log("lkasdmlkamdsklamdlkamslkdmaslksdmaslksdmlksasmdlkassmdlkassmdlkasmsdlkamsdlka");
+  var queryResult, queryResultId;
+  var queryId = "SELECT idcards from cards ORDER BY idcards desc LIMIT 1";
+  var query = "SELECT imagePath FROM cards WHERE idcards=";
+  try {
+    queryResultId = await pool.query(queryId);
+
+    console.log("PROBANDOOOOOOOOOOOOOOO\n\n\n\n",queryResultId[0].idcards);
+    queryResult = await pool.query('SELECT imagePath FROM cards WHERE idcards=?', queryResultId[0].idcards);
+    console.log("SEGUIMOSSSSSSS\n\n\n\n",queryResult);
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Insert fail.'));
+  }
+
+  res.end(queryResult[0].imagePath);
+
+});
+
 /* POST get info from database collections cards*/
 router.post('/albumsWithCards', validateToken, async function (req, res) {
   console.log('Pegando kromos en el album...');
   console.log(req.body);
   var idAlbum = req.body.idAlbum;
   var idCard = req.body.idCard;
-
+  var query = "SELECT idalbum FROM albumcards WHERE idcards = "+idCard+" and idalbum = "+idAlbum+";";
+  var conditionalQuery;
   var queryResult;
   try {
-    queryResult = await pool.query('INSERT INTO albumcards (idalbum, idcards) VALUES ('+idAlbum+', '+idCard+')');
+    conditionalQuery = await pool.query(query);
+    if(conditionalQuery.length==0) {
+      queryResult = await pool.query('INSERT INTO albumcards (idalbum, idcards) VALUES ('+idAlbum+', '+idCard+')');
+    }else{
+      res.end("Error")
+    }
   } catch (error) {
     console.log(error);
     return done(null, false, req.flash('message', 'Error inserting values.'));
   }
 
-  res.end();
+  res.end("Ok");
 
 });
 
+async function storeCards(kromosSplitted){
+  for (let i = 0; i < kromosSplitted.length; i++) {
+    var queryKromos = "INSERT INTO cards (name, price, maxUnits, remainingUnits, imagePath, idcollections) VALUES ('" + kromosSplitted[i][0] 
+      + "'," + kromosSplitted[i][1] + "," + kromosSplitted[i][2] + "," + kromosSplitted[i][2] 
+      + ",'" + 'Kromo'+(i+1)+'_NewCollection'+newCollectionID+ "'," + queryAddCollections.insertId + ")";
+    queryAddKromos = await pool.query(queryKromos);
+    console.log(queryAddKromos);
+  }
+}
+
 /* POST info collections to DB */
 router.post('/collectionAdd', validateToken, async (req, res) => {
+  console.log('LLEGUE HDP\n\n\n\n\n\n');
   var kromos = req.body.kromos.split(',');
   var collection = req.body.collection.split('-');
+  var numCol = req.body.numCol;
   var kromosSplitted = [];  
 
   console.log(kromos);
   console.log(collection);
+  console.log('texto\n\n\n\n\n\n', numCol);
+
 
   for (let i = 0; i < kromos.length; i++) {
     kromosSplitted.push(kromos[i].split('-'));
@@ -528,11 +633,9 @@ router.post('/collectionAdd', validateToken, async (req, res) => {
     console.log(queryAddCollections.insertId);
 
     /* Query to store the cards */
-    for (let i = 0; i < kromosSplitted.length; i++) {
-      var queryKromos = "INSERT INTO cards (name, price, maxUnits, remainingUnits, imagePath, idcollections) VALUES ('" + kromosSplitted[i][0] + "'," + kromosSplitted[i][1] + "," + kromosSplitted[i][2] + "," + kromosSplitted[i][2] + ",'" + 'Kromo'+(auxiliarDeEnfermería++)+'_NewCollection'+newCollectionID + "'," + queryAddCollections.insertId + ")";
-      queryAddKromos = await pool.query(queryKromos);
-      console.log(queryAddKromos);
-    }
+    await(storeCards(kromosSplitted))
+    console.log("longitudddd\n\n\n\n\n\n\n\n\n\n\n\n", kromosSplitted.length);
+    newCollectionID++;
     res.end();
   } catch (error) {
     console.log(error);
@@ -558,6 +661,38 @@ router.post('/collectionEdit', validateToken, async (req, res) => {
   }
 });
 
+/* POST update state album */
+router.post('/updateStateAlbum', validateToken, async (req, res) => {
+  var idAlbum = req.body.idAlbum;
+  var stateAlbum = req.body.stateAlbum;
+
+  try {
+    var query = "UPDATE albums SET status = '"+ stateAlbum +"' WHERE idalbums = "+ idAlbum +"";
+    queryUpdateState = await pool.query(query);
+    
+    res.end();
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Error while trying to edit state albums to DB'));
+  }
+});
+
+/* POST update remaining units cards */
+router.post('/updateRemainingUnits', validateToken, async (req, res) => {
+  var idCards = req.body.idCards;
+  console.log(idCards);
+
+  try {
+    var query = "UPDATE cards SET remainingUnits = remainingUnits + 1 WHERE idcards = "+ idCards +"";
+    queryUpdateState = await pool.query(query);
+    console.log(queryUpdateState);
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Error while trying to edit remaining units cards to DB'));
+  }
+  res.end();
+});
+
 /* POST store images */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -579,7 +714,6 @@ router.post("/upload", validateToken, subida, (req, res, next) =>{
   console.log("Image uploaded");
   auxiliarDeEnfermería = 1;
   auxiliarDeVuelo = 1;
-  newCollectionID++;
   res.redirect('/landingPageAdmin/manageKromos');
 });
 
@@ -625,9 +759,9 @@ router.get('/landingPageAdmin/index', validateToken, function (req, res) {
 
 router.get('/landingPageAdmin/table', validateToken, function (req, res) {
   res.sendFile('/landingPageAdmin/table.html', { root: publicDirectory })
-});
+}); 
 
-router.get('/landingPageAdmin/manageKromos', validateToken, function (req, res) {
+router.get('/landingPageAdmin/manageKromos', validateToken, updateNewCollectionID, function (req, res) {
   res.sendFile('/landingPageAdmin/manageKromos.html', { root: publicDirectory })
 });
 
