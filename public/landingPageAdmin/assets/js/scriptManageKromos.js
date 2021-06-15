@@ -6,6 +6,7 @@ var auxTimesAdd;
 var imgs = [];
 var idCollectionEdit;
 var nameColK;
+var collections = [];
 
 /* Inicialization */
 async function start(){
@@ -13,9 +14,12 @@ async function start(){
     auxLoad = JSON.parse(auxLoad);
     writeData(auxLoad);
     auxTimesAdd = 0;
-    auxTimes = 0;
-
-    addRow(4);
+    auxTimes = 0; 
+    
+    var aux = await loadCollections();
+    collections = JSON.parse(aux);
+    console.log(collections);
+    writeCollections();
 }
 
 /* POST methods */
@@ -30,6 +34,12 @@ async function loadNameUsr() {
     return $.post(
         "/userInfo",
         {session: "session"}
+    );
+}
+
+async function loadCollections() {
+    return $.post(
+        "/collections",
     );
 }
 
@@ -68,6 +78,17 @@ function addKromoFront(nameKromo){
 
 function writeData(data) {
     document.getElementById("nombre").innerHTML = data.name.concat(" "+data.surnames);
+}
+
+function writeCollections() {
+    var pos;
+    for(let i=0; i<6; i++) {
+        pos = i+1;
+        document.getElementById("name_"+pos).innerHTML += collections[i].name;
+    }
+    for(let i=6; i<collections.length; i++) {
+        addRow(i);
+    }
 }
 
 
@@ -117,7 +138,6 @@ async function addKromo(){
         swal('Oops...', 'Debe establecer una nombre para la colección', 'error');
     }
     
-
 }
 
 async function addCollection(){
@@ -152,6 +172,18 @@ async function addCollection(){
     }else{
         swal('Oops...', 'Debe crear 10 cromos', 'error');
     }
+    location.reload();
+}
+
+function valueDefault(id) {
+    var pos = id - 1;
+    document.getElementById('nombreKromoEdit').value = collections[pos].name;
+    document.getElementById('precioKromoEdit').value = collections[pos].price;
+    if(collections[pos].activated == 1) {
+        document.getElementById('activatedYesEdit').checked = true;
+    }else{
+        document.getElementById('activatedNoEdit').checked = true;
+    }
 }
 
 async function editCollection(){
@@ -171,8 +203,16 @@ async function editCollection(){
                 }else{
                     valoresStringCol = valoresStringCol.concat("0");
                 }
-                swal('¡Perfecto!', 'Colección modificada', 'success');
+                
                 await saveDataDBEdit(valoresStringCol, idCollectionEdit);
+                swal("¡Perfecto!", "Colección modificada","success")
+                .then(function(isConfirm) {
+                if (isConfirm) {
+                    location.reload();
+                } else {
+                    //if no clicked => do something else
+                }
+                });
             }else{
                 swal('Oops...', 'Debe seleccionar una de las opciones Activa o No Activa', 'error'); 
             }
@@ -185,6 +225,7 @@ async function editCollection(){
 }
 
 function addRow(id){
+    let pos = id + 1;
     const table = document.getElementById("edit_table");
 
     let row = document.createElement('tr');
@@ -199,7 +240,7 @@ function addRow(id){
         nameImage.height = '30';
         nameImage.className = 'rounded-circle me-2';
 
-        let nameText = document.createTextNode('Ejemplo');
+        let nameText = document.createTextNode(collections[id].name);
        
         nameCell.appendChild(nameImage);
         nameCell.innerHTML += '&nbsp;';
@@ -212,7 +253,7 @@ function addRow(id){
         editLink.innerText = "Editar";
         editLink.href = '#collection';
         editLink.setAttribute('data-bs-toggle', "modal");
-        editLink.setAttribute('onclick', "modalId("+id+");");
+        editLink.setAttribute('onclick', "modalId(" + pos + "), valueDefault(" + pos + ");");
        
         editCell.appendChild(editLink);
 

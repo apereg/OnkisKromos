@@ -76,14 +76,14 @@ function stepForward() {
 }
 
 function loadRows(){
-    for(let i = 1; i <= collections.length; i++){
+    for(let i=1; i<=collections.length; i++) {
        rowState(i); 
        rowPrice(i);
        rowName(i);
     }
 }
 
-function rowState(rowNum){
+function rowState(rowNum) {
     const table = document.getElementById("albums_table");
     
     var cell = document.getElementById("status_"+rowNum);
@@ -94,7 +94,7 @@ function rowState(rowNum){
     }
 }
 
-function rowPrice(rowNum){
+function rowPrice(rowNum) {
     var cell = document.getElementById("price_"+rowNum);
     cell.innerHTML= collections[rowNum - 1].price;   
 }
@@ -104,7 +104,7 @@ function rowName(rowNum){
     cell.innerHTML += collections[rowNum - 1].name;   
 }
 
-function newRow(){
+function newRow() {
     const table = document.getElementById("albums_table");
 
     //Contador de id's
@@ -172,11 +172,11 @@ async function byCard() {
     var remainingUnits = document.getElementById("units").value;
     var nameCol = document.getElementById("nameCol").value;
     if(remainingUnits==0) {
-        //error no hay unidades
+        swal('Oops...', 'No hay unidades restantes de dicho kromo', 'error');
     }else if(user.points<price){
-        //error no dinero
+        swal('Oops...', 'Usted no posee los suficientes puntos para comprar el kromo', 'error');
     }else{
-        //realizar compra
+        //Realizar compra
         var idCard = await loadIdCard(name);
         idCard = JSON.parse(idCard);
 
@@ -201,7 +201,7 @@ async function byCard() {
         if(idAlbum!=null){
             makeOperation(idCard, price, idAlbum, user.idusers);
         }else{
-            //error no tiene el album
+            swal('Oops...', 'Usted no posee el album necesario para dicho kromo', 'error');
         }
     }
 }
@@ -283,10 +283,26 @@ async function asociatedAlbumCard(idCards, idAlbum) {
 /* COMPRA DE ALBUMS */
 
 async function buyAlbum(id) {
+    console.log("HOLAAAAAAAAA");
     var user = await loadData();
     user = JSON.parse(user);
-    var price = document.getElementById("price_"+id).value;
+    console.log(user)
+    var price = document.getElementById("price_"+id).innerHTML;
     console.log(price);
-
+    if(user.points<price) {
+        swal('Oops...', 'Usted no posee los suficientes puntos para comprar el kromo', 'error');
+    }else{
+        console.log("HOLAAAAAAAAA");
+        await buyAlbumBD(id, user.idusers);
+    }
 }
+
+async function buyAlbumBD(idCol, idUs) {
+    return $.post(
+        "/insertAlbums",
+        {idCollection: idCol,
+        idUser: idUs}
+    );
+}
+
 /* FIN COMPRA DE ALBUMS */

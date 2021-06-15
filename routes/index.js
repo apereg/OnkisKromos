@@ -53,7 +53,6 @@ function validateToken(req, res, next) {
     console.log('No hay token, redirigiendo al Login.')
     res.redirect('/login')
   }
-  next()
 }
 
 function generateToken(req, res, next) {
@@ -276,7 +275,7 @@ router.post('/nameCollectionId', validateToken, async function (req, res) {
 
 });
 
-
+/* POST get info from database collections */
 router.post('/collectionsId', validateToken, async function (req, res) {
   console.log('Buscando informacion de las colecciones en la base de datos...');
   var ids = req.body.id.split(",");
@@ -288,7 +287,7 @@ router.post('/collectionsId', validateToken, async function (req, res) {
       output.push(queryResult);
     }
   } catch (error) {
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Collection not found.'));
   }
 
   res.end(JSON.stringify(output));
@@ -309,14 +308,14 @@ router.post('/cardsCollections', validateToken, async function (req, res) {
       output.push({ "id": ids[i], "result": number });
     }
   } catch (error) {
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Card not found.'));
   }
 
   res.end(JSON.stringify(output));
 
 });
 
-/* POST get info from database collections cards*/
+/* POST get info from database cards*/
 router.post('/cardsAlbum', validateToken, async function (req, res) {
   console.log('Buscando informacion de los kromos en la base de datos...');
   var id = req.body.id;
@@ -330,13 +329,14 @@ router.post('/cardsAlbum', validateToken, async function (req, res) {
     }
   } catch (error) {
     console.log(error);
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Card not found.'));
   }
 
   res.end(JSON.stringify(output));
 
 });
 
+/* POST get info from database album cards*/
 router.post('/idCard', validateToken, async function (req, res) {
   console.log('Buscando informacion del id kromos en la base de datos...');
   var name = req.body.name;
@@ -347,13 +347,13 @@ router.post('/idCard', validateToken, async function (req, res) {
     queryResult = await pool.query('SELECT idcards FROM cards where name = ?;', name);
     
   } catch (error) {
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Card not found.'));
   }
   res.end(JSON.stringify(queryResult[0].idcards));
 
 });
 
-
+/* POST get info from captcha*/
 router.post('/submit', validateToken, async function (req, res) {
   //captcha verify
   console.log("Vamos a comprobar el captcha");
@@ -390,6 +390,7 @@ router.post('/submit', validateToken, async function (req, res) {
 
 /* POST points to user */
 router.post('/addPoints', validateToken, async (req, res) => {
+  console.log('Se procede a sumar puntos al usuario.');
   var points = req.body.points;
   let user = req.user.username;
   console.log('Se deberian dar ' + points + ' al usuario ' + user)
@@ -398,23 +399,25 @@ router.post('/addPoints', validateToken, async (req, res) => {
     queryResult = await pool.query(query);
   } catch (error) {
     console.log(error);
-    return done(null, false, req.flash('message', 'Error al añadir puntos.'));
+    return done(null, false, req.flash('message', 'Error adding points.'));
   }
 });
 
 /* POST subtract cards */
 router.post('/subtractCards', validateToken, async (req, res) => {
+  console.log('Se procede a restar el numero de unidades restantes.');
   var id = req.body.id;
   var query = "UPDATE cards SET remainingUnits = remainingUnits - 1 where idcards = " + id;
   try {
     queryResult = await pool.query(query);
   } catch (error) {
-    return done(null, false, req.flash('message', 'Error al restar unidades restantes.'));
+    return done(null, false, req.flash('message', 'Error substracting cards.'));
   }
 });
 
-/* POST subtract to user */
+/* POST subtract points to user */
 router.post('/subtractPoints', validateToken, async (req, res) => {
+  console.log('Se procede a restar puntos al usuario');
   var points = req.body.points;
   var user = req.body.id;
   var query = "UPDATE users SET points = points - " + points + " where idusers = " + user;
@@ -422,11 +425,11 @@ router.post('/subtractPoints', validateToken, async (req, res) => {
     queryResult = await pool.query(query);
   } catch (error) {
     console.log(error);
-    return done(null, false, req.flash('message', 'Error al restar puntos.'));
+    return done(null, false, req.flash('message', 'Error substracting points.'));
   }
 });
 
-/* POST get info from database collections cards*/
+/* POST get info of collections from database albums*/
 router.post('/albumsCollections', validateToken, async function (req, res) {
   console.log('Buscando informacion de los albums en la base de datos...');
   console.log(req.body);
@@ -439,7 +442,7 @@ router.post('/albumsCollections', validateToken, async function (req, res) {
       output.push(queryResult[0].idcollection);
     }
   } catch (error) {
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Error album not found.'));
   }
 
   res.end(JSON.stringify(output));
@@ -457,16 +460,36 @@ router.post('/albumsCollection', validateToken, async function (req, res) {
     queryResult = await pool.query('SELECT idcollection FROM albums where idalbums = ?;', ids);
     
   } catch (error) {
-    return done(null, false, req.flash('message', 'Questions tables fails while getting questions.'));
+    return done(null, false, req.flash('message', 'Error album not found.'));
   }
 
   res.end(JSON.stringify(queryResult[0].idcollection));
 
 });
 
+/* POST insert info in database albums*/
+router.post('/insertAlbums', validateToken, async function (req, res) {
+  console.log('Se procedera a fabricar nuevos albums...');
+  console.log(req.body);
+  var idCol = req.body.idCollection;
+  var idUs = req.body.idUser;
+  var aux = 'No iniciada';
+  var queryResult;
+  var query = "INSERT INTO albums (status, idcollection, iduser) VALUES ('"+aux+"', "+idCol+", "+idUs+")";
+  try {
+    queryResult = await pool.query(query);
+  } catch (error) {
+    console.log(error);
+    return done(null, false, req.flash('message', 'Insert fail.'));
+  }
+
+  res.end();
+
+});
+
 /* POST get info from database collections cards*/
 router.post('/albumsWithCards', validateToken, async function (req, res) {
-  console.log('Pegando kromos...');
+  console.log('Pegando kromos en el album...');
   console.log(req.body);
   var idAlbum = req.body.idAlbum;
   var idCard = req.body.idCard;
@@ -534,36 +557,6 @@ router.post('/collectionEdit', validateToken, async (req, res) => {
     return done(null, false, req.flash('message', 'Error while trying to edit collections to DB'));
   }
 });
-
-
-/*const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    console.log("estoy");
-    var dir = "public/resources/kromos";
-    callback(null, dir);
-
-  },
-  filename: (req, file, callback) =>{
-    console.log("estoy filename");
-    console.log(file);
-    callback(null, file.originalname);
-  }
-})
-
-const upload = multer({
-  storage: storage,
-  limits: {fileSize: 1000000},
-}).array('image', 10);
-
-router.post("/upload", (req, res, next) =>{
-  console.log(req.body);
-  upload(req, res, function(err) {
-    if(err) {
-      return res.send("Something was wrong");
-    }
-    res.send("Upload complete");
-  })
-});*/
 
 /* POST store images */
 const storage = multer.diskStorage({
