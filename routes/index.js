@@ -597,13 +597,13 @@ router.post('/albumsWithCards', validateToken, async function (req, res) {
 
 });
 
-async function storeCards(kromosSplitted){
+async function storeCards(kromosSplitted, queryAddCollections, queryAddKromos){
   for (let i = 0; i < kromosSplitted.length; i++) {
     var queryKromos = "INSERT INTO cards (name, price, maxUnits, remainingUnits, imagePath, idcollections) VALUES ('" + kromosSplitted[i][0] 
       + "'," + kromosSplitted[i][1] + "," + kromosSplitted[i][2] + "," + kromosSplitted[i][2] 
-      + ",'" + 'Kromo'+(i+1)+'_NewCollection'+newCollectionID+ "'," + queryAddCollections.insertId + ")";
+      + ",'" + 'Kromo'+(i+1)+'_NewCollection' + queryAddCollections.insertId +  "'," + queryAddCollections.insertId + ")";
+    console.log('MAMAR -> ' +queryKromos+ ' <- MAMAR'); 
     queryAddKromos = await pool.query(queryKromos);
-    console.log(queryAddKromos);
   }
 }
 
@@ -614,10 +614,10 @@ router.post('/collectionAdd', validateToken, async (req, res) => {
   var collection = req.body.collection.split('-');
   var numCol = req.body.numCol;
   var kromosSplitted = [];  
-
+ 
   console.log(kromos);
   console.log(collection);
-  console.log('texto\n\n\n\n\n\n', numCol);
+  console.log('texto\n\n\n\n\n\n', numCol);  
 
 
   for (let i = 0; i < kromos.length; i++) {
@@ -633,9 +633,9 @@ router.post('/collectionAdd', validateToken, async (req, res) => {
     console.log(queryAddCollections.insertId);
 
     /* Query to store the cards */
-    await(storeCards(kromosSplitted))
+    await storeCards(kromosSplitted, queryAddCollections, queryAddKromos)
+    console.log('ANTIMAMARRE: ' +newCollectionID)
     console.log("longitudddd\n\n\n\n\n\n\n\n\n\n\n\n", kromosSplitted.length);
-    newCollectionID++;
     res.end();
   } catch (error) {
     console.log(error);
@@ -714,6 +714,7 @@ router.post("/upload", validateToken, subida, (req, res, next) =>{
   console.log("Image uploaded");
   auxiliarDeEnfermería = 1;
   auxiliarDeVuelo = 1;
+  newCollectionID++
   res.redirect('/landingPageAdmin/manageKromos');
 });
 
