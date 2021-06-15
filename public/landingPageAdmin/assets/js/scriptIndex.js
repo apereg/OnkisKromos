@@ -9,7 +9,6 @@ async function start(){
 }
 
 async function closeSession() {
-    console.log("Cerrando la sesion");
     return $.post(
         "/closeSession",
         {session: "session"}
@@ -17,7 +16,6 @@ async function closeSession() {
 }
 
 async function loadData() {
-    console.log("Accediendo a db js");
     return $.post(
         "/userInfo",
         {session: "session"}
@@ -25,7 +23,6 @@ async function loadData() {
 }
 
 async function loadDataAlbum() {
-    console.log("Accediendo a db js album");
     return $.post(
         "/userAlbums",
         {session: "session"}
@@ -47,8 +44,8 @@ function writeData(data) {
 }
 
 function writeDataAlbum(data) {
-    document.getElementById("percentaje").innerHTML = data[0]*100+"%";
-    document.getElementById("percentajeGraphic").style.width = data[0]*100+"%";
+    document.getElementById("percentaje").innerHTML = Math.round(data[0]*100)+"%";
+    document.getElementById("percentajeGraphic").style.width = Math.round(data[0]*100)+"%";
     var array = data[1];
     for (let i = 0; i < array.length; i++) {
         switch (array[i].idcollection) {

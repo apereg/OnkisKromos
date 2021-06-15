@@ -165,11 +165,14 @@
                                                         
                                                     </ul>
                                                 </div>
+                                                <form method="POST" action="/upload" enctype="multipart/form-data">
+                                                    <div class="col"><label class="form-label"></label><label class="form-label" for="fileImg" id="imgKromo"><strong>Imagen</strong></label></div>
+                                                    <div class="col"><input type="file" id="fileImg" name="image" accept=".jpg,.png" data-show-upload="true" data-show-caption="true" multiple><label>&nbsp;&nbsp;&nbsp;Máx 10</label></div>
+                                                    <span><br></span>
+                                                    <div class="col"><button class="btn btn-primary new-collection" type="submit" onclick="addCollection()" style="padding-left: 10px;">Añadir colección</button></div>
+                                                </form>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col"><button class="btn btn-primary new-collection" type="button" onclick="addCollection()">Añadir colección</button></div>
                                     </div>
                                 </div>
                             </div>
@@ -191,30 +194,30 @@
                                                                 <th>Edición</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody id="edit_table">
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
-                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal" onclick="modalId(6)">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
-                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal" onclick="modalId(1)">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
-                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal" onclick="modalId(4)">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
-                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal" onclick="modalId(2)">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
-                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal" onclick="modalId(5)">Editar</a></td>
                                                             </tr>
                                                             <tr>
                                                                 <td><img class="rounded-circle me-2" width="30" height="30" src="/landingPageAdmin/assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
-                                                                <td><a href="#collection" data-bs-toggle="modal">Editar</a></td>
+                                                                <td><a href="#collection" data-bs-toggle="modal" onclick="modalId(3)">Editar</a></td>
                                                             </tr>
                                                         </tbody>
                                                         <tfoot>
@@ -266,12 +269,7 @@
                     <div class="mb-3"></div>
                     <div class="mb-3"></div>
                     <div class="row">
-                        <form method="POST" action="/upload" enctype="multipart/form-data">
-                            <div class="col"><label class="form-label"></label><label class="form-label" for="username" id="imgKromo"><strong>Imagen</strong></label></div>
-                            <div class="col"><input type="file" id="fileImg" name="image" accept=".jpg,.png" data-show-upload="true" data-show-caption="true"></div>
-                            <span><br></span>
-                            <button class="btn btn-primary" type="submit" onclick="addKromo()" style="margin-left:350px;">Guardar</button>
-                        </form>
+                        <button class="btn btn-primary" type="submit" onclick="addKromo()">Guardar</button>                       
                     </div>
                 </div>
             </div>
@@ -285,13 +283,13 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col"><label class="col-form-label" for="username" id="nombreKromoEdit"><strong>Nombre&nbsp; &nbsp; &nbsp;</strong></label></div>
-                        <div class="col"><input type="text" id="name-1" name="username"></div>
+                        <div class="col"><label class="col-form-label" for="username" id="name1"><strong>Nombre&nbsp; &nbsp; &nbsp;</strong></label></div>
+                        <div class="col"><input type="text" id="nombreKromoEdit" name="username"></div>
                     </div>
                     <div class="mb-3"></div>
                     <div class="row">
-                        <div class="col"><label class="col-form-label" for="username" id="precioKromoEdit"><strong>Precio&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</strong></label></div>
-                        <div class="col"><input type="number" id="name-2" name="username" min="150" max="350"></div>
+                        <div class="col"><label class="col-form-label" for="username" id="name2"><strong>Precio&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</strong></label></div>
+                        <div class="col"><input type="number" id="precioKromoEdit" name="username" min="150" max="350"></div>
                     </div>
                     <div class="mb-3"></div>
                     <div class="row">

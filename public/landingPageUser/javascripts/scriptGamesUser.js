@@ -1,14 +1,17 @@
 async function start(){
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'games'
+    }
+
     writeData(auxLoad);
 }
 
 async function loadData() {
-    return $.post(
-        "/userInfo",
-        {session: "session"}
-    );
+    return $.post("/userInfo",{session: "session"})
 }
 
 function writeData(data) {

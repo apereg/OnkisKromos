@@ -145,58 +145,58 @@
                                         <tr>
                                             <th>Nombre de la colección</th>
                                             <th>Precio (puntos)</th>
-                                            <th>Existencias</th>
+                                            <th>Estado</th>
                                             <th>Comprar</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="albums_table">
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/valorantLogo.png">&nbsp;Valorant</td>
-                                            <td>300</td>
-                                            <td>10</td>
-                                            <td><a href="#">Comprar</a></td>
+                                            <td id="name_1"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/formula1Logo.png">&nbsp;</td>
+                                            <td id="price_1">300</td>
+                                            <td id="status_1">10</td>
+                                            <td id="buy_1"><a onclick="buyAlbum(1)" href="">Comprar</a></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/formula1Logo.png">&nbsp;Formula 1</td>
-                                            <td>150</td>
-                                            <td>5</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_2"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/csgoLogo.png">&nbsp;</td>
+                                            <td id="price_2">150</td>
+                                            <td id="status_2">5</td>
+                                            <td id="buy_2"><a onclick="buyAlbum(2)" href="">Comprar</a><br></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/nbaLogo.png">&nbsp;NBA</td>
-                                            <td>500</td>
-                                            <td>5</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_3"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/superligaLogo.png">&nbsp;</td>
+                                            <td id="price_3">500</td>
+                                            <td id="status_3">5</td>
+                                            <td id="buy_3"><a onclick="buyAlbum(3)" href="">Comprar</a><br></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/csgoLogo.png">&nbsp;CS:GO</td>
-                                            <td>250</td>
-                                            <td>5</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_4"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/nbaLogo.png">&nbsp;</td>
+                                            <td id="price_4">250</td>
+                                            <td id="status_4">5</td>
+                                            <td id="buy_4"><a onclick="buyAlbum(4)" href="">Comprar</a><br></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/rocketLogo.png">&nbsp;Rocket League</td>
-                                            <td>150</td>
-                                            <td>4</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_5"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/rocketLogo.png">&nbsp;</td>
+                                            <td id="price_5">150</td>
+                                            <td id="status_5">4</td>
+                                            <td id="buy_5"><a onclick="buyAlbum(5)" href="">Comprar</a><br></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/superligaLogo.png">&nbsp;Europa League</td>
-                                            <td>100</td>
-                                            <td>6</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_6"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/logoKromos/valorantLogo.png">&nbsp;</td>
+                                            <td id="price_6">100</td>
+                                            <td id="status_6">6</td>
+                                            <td id="buy_6"><a onclick="buyAlbum(6)" href="">Comprar</a><br></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/avatars/profile-pic.jpg">&nbsp;Proximamente...</td>
-                                            <td>Proximamente...</td>
-                                            <td>X</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_7"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/avatars/profile-pic.jpg">&nbsp;</td>
+                                            <td id="price_7">Proximamente...</td>
+                                            <td id="status_7">X</td>
+                                            <td id="buy_7"><a onclick="buyAlbum(7)" href="">Comprar</a><br></td>
                                         </tr>
                                         <tr>
-                                            <td><img class="rounded-circle me-2" width="30" height="30" src="assets/img/avatars/profile-pic.jpg">&nbsp;Proximamente...</td>
-                                            <td>Proximamente...</td>
-                                            <td>X</td>
-                                            <td><a href="#">Comprar</a><br></td>
+                                            <td id="name_8"><img class="rounded-circle me-2" width="30" height="30" src="assets/img/avatars/profile-pic.jpg">&nbsp;</td>
+                                            <td id="price_8">Proximamente...</td>
+                                            <td id="status_8">X</td>
+                                            <td id="buy_8"><a onclick="buyAlbum(8)" href="">Comprar</a><br></td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
@@ -235,7 +235,7 @@
                                                 <div class="col"><input type="text" class="form-control" id="price" readonly></div>
                                             </div>
                                             <div class="row">
-                                                <div class="col"><label class="col-form-label">Unidades Máximas</label></div>
+                                                <div class="col"><label class="col-form-label">Unidades restantes</label></div>
                                             </div>
                                             <div class="row">
                                                 <div class="col"><input type="text" class="form-control" id="units" readonly></div>
@@ -252,7 +252,7 @@
                                                 <div class="col"><span>&nbsp;</span></div>
                                             </div>
                                             <div class="row">
-                                                <div class="col"><button class="btn btn-primary" type="button" style="margin-left: 85px;width: 95px;height: 45px;">Comprar</button></div>
+                                                <div class="col"><button class="btn btn-primary" type="button" style="margin-left: 85px;width: 95px;height: 45px;" onclick="byCard()">Comprar</button></div>
                                             </div>
                                         </div>
                                     </div>

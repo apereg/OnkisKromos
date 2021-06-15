@@ -9,7 +9,6 @@ async function start(){
 }
 
 async function loadData() {
-    console.log("Accediendo a db js");
     return $.post(
         "/userInfo",
         {session: "session"}
@@ -31,7 +30,6 @@ function writeData(data) {
 }
 
 async function loadDataAlbum() {
-    console.log("Accediendo a db js album");
     return $.post(
         "/userAlbums",
         {session: "session"}
@@ -39,8 +37,8 @@ async function loadDataAlbum() {
 }
 
 function writeDataAlbum(data) {
-    document.getElementById("percentaje").innerHTML = data[0]*100+"%";
-    document.getElementById("percentajeGraphic").style.width = data[0]*100+"%";
+    document.getElementById("percentaje").innerHTML = Math.round(data[0]*100)+"%";
+    document.getElementById("percentajeGraphic").style.width = Math.round(data[0]*100)+"%";
     var array = data[1];
     for (let i = 0; i < array.length; i++) {
         switch (array[i].idcollection) {
@@ -49,7 +47,6 @@ function writeDataAlbum(data) {
                 document.getElementById("formulaPercentaje").style.width = Math.round((data[2][i]/10)*100)+"%";
                 break;
             case 2:
-                console.log(data[2]);
                 document.getElementById("csNumber").innerHTML = Math.round((data[2][i]/10)*100)+"%";
                 document.getElementById("csPercentaje").style.width = Math.round((data[2][i]/10)*100)+"%";
                 break;
@@ -72,7 +69,6 @@ function writeDataAlbum(data) {
 }
 
 async function closeSession() {
-    console.log("Cerrando la sesion");
     return $.post(
         "/closeSession",
         {session: "session"}

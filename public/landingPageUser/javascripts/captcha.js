@@ -1,4 +1,4 @@
-async function start(){
+async function start() {
     var auxLoad = await loadData();
     auxLoad = JSON.parse(auxLoad);
     writeData(auxLoad);
@@ -7,15 +7,16 @@ async function start(){
 async function loadData() {
     return $.post(
         "/userInfo",
-        {session: "session"}
+        { session: "session" }
     );
 }
 
 function writeData(data) {
-    document.getElementById("nombre").innerHTML = data.name.concat(" "+data.surnames);
+    document.getElementById("nombre").innerHTML = data.name.concat(" " + data.surnames);
 }
 
 async function captcha() {
+    console.log('capcha')
     //Captcha response
     var formData = new FormData(document.getElementById('submit_form'));
     var captcha = formData.get('g-recaptcha-response');
@@ -24,35 +25,41 @@ async function captcha() {
     var solucion = false;
     //Opcion con jquery
 
-    alert( await verifyCaptcha(captcha));
-                  
-    if('true' === await verifyCaptcha(captcha)){
-        alert(solucion);  
-        console.log("We did it");
-        solucion = true;
-    }
 
-    
-
-    if('true' === result){
-        console.log("has ganado 50 coins ");
-        //Give points
-    }else{
-        console.log("Se ha producido un error");
-        //Nothing
+    if ('true' === await verifyCaptcha(captcha)) {
+        givePoints(50)
+        swal({
+            title: '¡Enhorabuena ser humano',
+            text: "¡Disfruta de tus 50 puntos por hacer absolutamente nada!",
+            icon: 'success',
+            button: "¡Gracias!"
+        })
+            .then(() => {
+                location.reload();
+            });
+    } else {
+        swal({
+            title: '¿Beep-boop?',
+            text: "El captcha no se pudo validar, intentalo de nuevo.",
+            icon: 'error',
+            button: "¡Perfecto!"
+        })
+            .then(() => {
+                location.reload();
+            });
     }
-                      
 }
 
 async function verifyCaptcha(captcha) {
-    return $.post(
-        "/submit", {captcha: captcha},                 
-    );
+    return $.post("/submit", { captcha: captcha }, function (req, res) {
+        if (status !== 'success') swal("¡Oh no!", "Ha ocurrido un error al validar el captcha, ¡Intentalo de nuevo!", "error", { button: "¡Aceptar!", });
+    });
 }
 
 
-async function givePoints(points){
-    await ($.post('/addPoints', {points: points}, function (data, status) {
-        if (status !== 'success') swal("¡Oh no!", "Ha ocurrido un error al otorgar los puntos, ¡Intentalo de nuevo!", "error", {button: "¡Aceptar!",});
-}));
+async function givePoints(points) {
+    console.log('A dar ' + points + ' points')
+    await ($.post('/addPoints', { points: points }, function (data, status) {
+        if (status !== 'success') swal("¡Oh no!", "Ha ocurrido un error al otorgar los puntos, ¡Intentalo de nuevo!", "error", { button: "¡Aceptar!", });
+    }));
 }

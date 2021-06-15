@@ -9,7 +9,13 @@ var letters = [];
 
 async function start(){
     var auxLoad = await loadData();
-    auxLoad = JSON.parse(auxLoad);
+
+    try{
+        auxLoad = JSON.parse(auxLoad);
+    }catch(e){
+        window.location.href = 'hangman'
+    }
+
     writeData(auxLoad);
     reset();
     selectImage();
@@ -59,10 +65,7 @@ function endGame() {
     return false;
 }
 
-function newGame() {
-    
-    console.log("iniciando partida");
-    
+function newGame() {    
     var play;
     if(active){        
         swal({
@@ -83,19 +86,16 @@ function newGame() {
                     play = true;
                 }
             });
-                     
+                    
 
     }else{
         active = true;
         play = true;
     }
-    console.log("empezamos");
     if(play) {
         reset();
         active = true;
-        console.log(resp);
         word = selectWord();
-        console.log(word);
     }
     
 }
@@ -107,7 +107,6 @@ function calculatePoints() {
 async function newLetter() {
     if(active) {
         var letter = document.getElementById("letter").value.toLowerCase();
-        console.log("letter: ",letter);
         if(letter.length!=0) {
             if(!checkRepet(letter)) {
                 letters.push(letter);

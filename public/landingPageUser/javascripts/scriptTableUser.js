@@ -23,7 +23,6 @@ async function start(){
 }
 
 async function loadData() {
-    console.log("Accediendo a db js");
     return $.post(
         "/userInfo",
         {session: "session"}
@@ -35,7 +34,6 @@ function writeData(data) {
 }
 
 async function loadAlbums() {
-    console.log("Accediendo a db para sacar todas las colecciones");
     return $.post(
         "/userAlbums",
         {session: "session"}
@@ -43,7 +41,6 @@ async function loadAlbums() {
 }
 
 async function loadCollections() {
-    console.log("Accediendo a db para sacar todas las colecciones");
     return $.post(
         "/collections",
     );
@@ -54,7 +51,6 @@ async function loadNumCards(albums) {
     for(let i=0; i<albums.length; i++) {
         ids.push(albums[i].idalbums);
     }
-    console.log("Accediendo a db para sacar todas las colecciones");
     return $.post(
         "/cardsIdAlbums",
         {id: ids.toString()}
@@ -63,7 +59,6 @@ async function loadNumCards(albums) {
 
 function writeCollections(album, collections, cards) {
     var idCollections = formatAlbumNumbers(album);
-    console.log(cards);
     for(let i=0; i<collections.length; i++) {
         switch(collections[i].idcollections) {
             case 1:
@@ -203,11 +198,9 @@ async function modal(collection) {
     albums = JSON.parse(albums);
     if(albums[1].length>0){
         albums = extractAlbums(albums[1], collection);
-        console.log(albums);
         if(albums.length>0){
             var cards = await loadCards(albums);
             cards = JSON.parse(cards);
-            console.log(cards);
             kromos = cards;
             showCard(kromos[0]);
         }
@@ -278,7 +271,6 @@ function stepForward() {
 
 function importRow(){
     for(let i = 6; i < collections.length; i++){
-        console.log(collections[i].name);
         addRow("assets/img/logoKromos/valorantLogo.png", collections[i].name, i, collections[i].activated, collections[i].price, datetimeToDate(collections[i].date));
     }
 }

@@ -25,26 +25,34 @@ app.set('port', port);
  */
 var server = http.createServer(app);
 
-
+/*
+var server = https.createServer(app)
 var options = {
-  key: fs.readFileSync(path.resolve('certs/server.key')),
-   cert: fs.readFileSync(path.resolve('certs/server.crt'))
-}
+  key: fs.readFileSync(path.join(__dirname, '../certs/key.pem'))
+, cert: fs.readFileSync(path.join(__dirname, '../certs/cert.pem'))
+, passphrase: '%UEIqIJ@bQ2n'
+, requestCert: false
+, rejectUnauthorized: true
+};
 
-https.createServer(options, app).listen(443, function(){
-	console.log('Servidor https corriendo en el puerto 443');
+insecureServer = http.createServer();
+insecureServer.on('request', function (req, res) {
+  // TODO also redirect websocket upgrades
+  res.setHeader(
+    'Location'
+  , 'https://' + req.headers.host.replace(/:\d+/, ':' + port) + req.url
+  );
+  res.statusCode = 302;
+  res.end();
+});
+insecureServer.listen(3000, function(){
+  console.log("\nRedirecting all http traffic from 3000 to https\n");
 }); 
 
-/*
-function requireHTTPS(req, res, next) {
-  // The 'x-forwarded-proto' check is for Heroku
-  if (!req.secure && req.get('x-forwarded-proto') !== 'https' && process.env.NODE_ENV !== "development") {
-    return res.redirect('https://' + req.get('Host') + req.url);
-  }
-  next();
-}
-app.use(requireHTTPS);
-*/
+
+var publicDir = path.join(__dirname, 'public');
+  var app = require('./app').create(server, host, port, publicDir);
+  listen(app); 
 
 
 /**

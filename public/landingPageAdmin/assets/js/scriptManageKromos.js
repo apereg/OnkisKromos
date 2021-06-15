@@ -1,7 +1,11 @@
 var valoresKromo = [];
 var valoresColeccion = [];
+var valoresColeccionEdit = [];
 var auxTimes;
 var auxTimesAdd;
+var imgs = [];
+var idCollectionEdit;
+var nameColK;
 
 /* Inicialization */
 async function start(){
@@ -10,11 +14,12 @@ async function start(){
     writeData(auxLoad);
     auxTimesAdd = 0;
     auxTimes = 0;
+
+    addRow(4);
 }
 
 /* POST methods */
 async function closeSession() {
-    console.log("Cerrando la sesion");
     return $.post(
         "/closeSession",
         {session: "session"}
@@ -29,7 +34,6 @@ async function loadNameUsr() {
 }
 
 async function saveDataDB(valoresStringCol) {
-    console.log("Accediendo a db js");
     return $.post(
         "/collectionAdd",
         {kromos: valoresKromo.toString(),
@@ -37,9 +41,18 @@ async function saveDataDB(valoresStringCol) {
     );
 }
 
+async function saveDataDBEdit(valoresStringCol, idCollectionEdit){
+    return $.post(
+        "/collectionEdit",
+        {collection: valoresStringCol,
+            idCol: idCollectionEdit}
+    );
+}
+
 async function saveImgDB() {
     return $.post(
-        "/upload"
+        "/upload",
+        {images: imgs}
     );
 }
 
@@ -57,11 +70,17 @@ function writeData(data) {
     document.getElementById("nombre").innerHTML = data.name.concat(" "+data.surnames);
 }
 
+
+function modalId(id){
+    idCollectionEdit = id;
+}
+
 async function addKromo(){
     var nameKromo = document.getElementById('nameCrear').value;
     var precioKromo = document.getElementById('precioCrear').value;
     var cantMaxKromo = document.getElementById('cantMaxCrear').value;
     var fileImg = document.getElementById('fileImg').value;
+    imgs.push(fileImg);
     var valoresString;
 
     if(auxTimesAdd===9){
@@ -69,34 +88,35 @@ async function addKromo(){
         document.getElementById('nameCrear').value='';
         document.getElementById('precioCrear').value='';
         document.getElementById('cantMaxCrear').value='';
-        document.getElementById('fileImg').value='';
+        //document.getElementById('fileImg').value='';
     }
 
-    if(nameKromo.length>0 && nameKromo.length<=45){
-        if(precioKromo>=25 && precioKromo<=150){
-            if(cantMaxKromo>=5 && cantMaxKromo<=10){
-                if (fileImg.length>0) {
-                    valoresString = nameKromo.concat("-");
-                    valoresString = valoresString.concat(precioKromo+"-");
-                    valoresString = valoresString.concat(cantMaxKromo+"-");
-                    var path = fileImg.split("\\");
-                    valoresString = valoresString.concat(path[2]);
-                    console.log(path[2]);
-                    addKromoFront(nameKromo);
-                    valoresKromo.push(valoresString);
-                    auxTimesAdd++;
+    nameColK = document.getElementById('name').value;
+    if(nameColK.length>0 && nameColK.length<=45){
+        if(nameKromo.length>0 && nameKromo.length<=45){
+            if(precioKromo>=25 && precioKromo<=150){
+                if(cantMaxKromo>=5 && cantMaxKromo<=10){
+                        valoresString = nameKromo.concat("-");
+                        valoresString = valoresString.concat(precioKromo+"-");
+                        valoresString = valoresString.concat(cantMaxKromo+"-");
+                        //var path = 'Kromo'+(auxTimesAdd+1)+'_'+nameColK;
+                        //valoresString = valoresString.concat(path);
+                        addKromoFront(nameKromo);
+                        valoresKromo.push(valoresString);
+                        auxTimesAdd++;
                 }else{
-                    swal('Oops...', 'Debe seleccionar una imagen', 'error'); 
+                    swal('Oops...', 'La cantidad maxima de cromos ha de ser entre 5 y 10', 'error'); 
                 }
             }else{
-                swal('Oops...', 'La cantidad maxima de cromos ha de ser entre 5 y 10', 'error'); 
+                swal('Oops...', 'El precio de los cromos ha de ser entre 25 y 150', 'error'); 
             }
         }else{
-            swal('Oops...', 'El precio de los cromos ha de ser entre 25 y 150', 'error'); 
+            swal('Oops...', 'Debe establecer una nombre para el cromo', 'error');  
         }
     }else{
-        swal('Oops...', 'Debe establecer una nombre para el cromo', 'error');  
+        swal('Oops...', 'Debe establecer una nombre para la colección', 'error');
     }
+    
 
 }
 
@@ -119,8 +139,6 @@ async function addCollection(){
                         valoresStringCol = valoresStringCol.concat("0");
                     }
                     swal('¡Perfecto!', 'Colección añadida', 'success');
-                    //await saveImgDB();
-                    console.log("paso a guardar colecion")
                     await saveDataDB(valoresStringCol);
                 }else{
                     swal('Oops...', 'Debe seleccionar una de las opciones Activa o No Activa', 'error'); 
@@ -136,6 +154,70 @@ async function addCollection(){
     }
 }
 
-function editCollection(){
+async function editCollection(){
+    var nameCol= document.getElementById('nombreKromoEdit').value;
+    var priceCol = document.getElementById('precioKromoEdit').value;
+    var activatedColY = document.getElementById('activatedYesEdit').checked;
+    var activatedColN = document.getElementById('activatedNoEdit').checked;
+    var valoresStringCol;
 
+    if(nameCol.length>0 && nameCol.length<=45){
+        if(priceCol>=150 && priceCol<=350){
+            if(activatedColY || activatedColN){
+                valoresStringCol = nameCol.concat("-");
+                valoresStringCol = valoresStringCol.concat(priceCol+"-");
+                if(activatedColY){
+                    valoresStringCol = valoresStringCol.concat("1"+"-");
+                }else{
+                    valoresStringCol = valoresStringCol.concat("0");
+                }
+                swal('¡Perfecto!', 'Colección modificada', 'success');
+                await saveDataDBEdit(valoresStringCol, idCollectionEdit);
+            }else{
+                swal('Oops...', 'Debe seleccionar una de las opciones Activa o No Activa', 'error'); 
+            }
+        }else{
+            swal('Oops...', 'El precio debe establecerse entre 150 y 350 puntos', 'error'); 
+        }
+    }else{
+        swal('Oops...', 'Debe establecer una nombre para la colección', 'error'); 
+    }
+}
+
+function addRow(id){
+    const table = document.getElementById("edit_table");
+
+    let row = document.createElement('tr');
+
+    let nameCell = document.createElement('td');
+
+        let nameImage = document.createElement("img");
+        
+        //Source de la imagen
+        nameImage.src = "http://onkisko.ciscofreak.com:3000/landingPageUser/assets/img/avatars/profile-pic.jpg";
+        nameImage.width = '30';
+        nameImage.height = '30';
+        nameImage.className = 'rounded-circle me-2';
+
+        let nameText = document.createTextNode('Ejemplo');
+       
+        nameCell.appendChild(nameImage);
+        nameCell.innerHTML += '&nbsp;';
+        nameCell.appendChild(nameText);
+
+        let editCell = document.createElement('td');
+
+        let editLink = document.createElement('a');
+
+        editLink.innerText = "Editar";
+        editLink.href = '#collection';
+        editLink.setAttribute('data-bs-toggle', "modal");
+        editLink.setAttribute('onclick', "modalId("+id+");");
+       
+        editCell.appendChild(editLink);
+
+        row.appendChild(nameCell);
+        row.appendChild(editCell);
+
+        table.appendChild(row);
 }

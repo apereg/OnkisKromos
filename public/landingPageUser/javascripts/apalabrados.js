@@ -41,7 +41,7 @@ async function loadNewQuestionFromServer(){
         }
     })
 }
-
+ 
 function checkAnswers(){
     let possibleAnswers = []
     possibleAnswers.push(document.getElementById('mainRow').getElementsByTagName('input')[0].value)
