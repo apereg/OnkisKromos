@@ -27,8 +27,6 @@ async function start(){
     collections = JSON.parse(aux);    
     writeCollections();
 
-    console.log(collections.length+1);
-
     kromos = await loadCards();
     kromos = JSON.parse(kromos);
     writeCard();
@@ -67,7 +65,6 @@ async function writeCard() {
 }
 
 async function idToNameCollection(id) {
-    console.log("Accediendo a db para sacar el nombre de la colección");
     return $.post(
         "/nameCollectionId",
         {id: id}
@@ -210,24 +207,10 @@ async function addCollection(){
                     }else{
                         valoresStringCol = valoresStringCol.concat("0");
                     }
-                    /*
-                    console.log("LLAMANDO AL NUM");
-                    var id = await loadNum();
-                    console.log("adjnasd", id);
-                    var num = obtainId(id)
-                    console.log(num);
-                    var pos = parseInt(num);
-                    console.log(pos+1);
-                    await saveDataDB(valoresStringCol, pos+1);
-                    */
                     await saveDataDB(valoresStringCol, 1);
                     swal('¡Perfecto!', 'Colección añadida', 'success')
                     .then(function(isConfirm) {
-                        if (isConfirm) {
-                            //location.reload();
-                        } else {
-                            //if no clicked => do something else
-                        }
+                        if (isConfirm) location.reload();
                     });
                 }else{
                     swal('Oops...', 'Debe seleccionar una de las opciones Activa o No Activa', 'error'); 
@@ -245,14 +228,10 @@ async function addCollection(){
 }
 
 function obtainId(path) {
-    console.log(path);
     try {
         var ruta = path.split("_");
-        console.log(ruta[1]);
         var auxiliar = ruta[1].replace("N","");
-        console.log(auxiliar);
         var aux = auxiliar.split("n");
-        console.log(aux[1]);
         if(aux[1]!=undefined){
             return aux[1];
         }else{

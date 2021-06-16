@@ -31,7 +31,6 @@ async function loadData() {
 }
 
 async function loadCollections() {
-    console.log("Accediendo a la database para sacar todas las colecciones");
     return $.post(
         "/collections",
     );
@@ -59,7 +58,6 @@ async function writeCard() {
 }
 
 async function idToNameCollection(id) {
-    console.log("Accediendo a db para sacar el nombre de la colección");
     return $.post(
         "/nameCollectionId",
         {id: id}
@@ -267,8 +265,6 @@ async function actualizarEstadoAlbum(idAlbum) {
         await updateAlbum(idAlbum, "Completada parcialmente");
     }else if(units==10){
         await updateAlbum(idAlbum, "Finaliza");
-    }else{
-        console.log("El album no cambia de estado");
     }
 }
 function obtainAlbum(idsAlbums, nameCollections, name) {    
